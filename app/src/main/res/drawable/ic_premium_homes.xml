@@ -1,0 +1,47 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="100dp"
+    android:height="110dp"
+    android:viewportWidth="100"
+    android:viewportHeight="90">
+
+    <!-- House outline -->
+    <path
+        android:pathData="M10,85 L10,50 L50,15 L90,50 L90,85 L10,85 Z"
+        android:strokeColor="#006837"
+        android:strokeWidth="3.5"
+        android:strokeLineJoin="miter" />
+
+    <!-- Center vertical line -->
+    <path
+        android:pathData="M50,15 L50,85"
+        android:strokeColor="#006837"
+        android:strokeWidth="3.5" />
+
+    <!-- Side vertical lines -->
+    <path
+        android:pathData="M31,32 L31,85 M69,32 L69,85"
+        android:strokeColor="#006837"
+        android:strokeWidth="3.5" />
+
+    <!-- Top triangle (roof structure) -->
+    <path
+        android:pathData="M31,32 L50,51 L69,32"
+        android:strokeColor="#006837"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="butt" />
+
+    <!-- First M shape (original) -->
+    <path
+        android:pathData="M10,50 L31,31 L50,50 L69,31 L90,50"
+        android:strokeColor="#006837"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="butt" />
+
+    <!-- Second M shape (20dp below the first) -->
+    <path
+        android:pathData="M10,70 L31,51 L50,70 L69,51 L90,70"
+        android:strokeColor="#006837"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="butt" />
+
+</vector>

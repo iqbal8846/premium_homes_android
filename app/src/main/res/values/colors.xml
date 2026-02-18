@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="primary">#005235</color>
+    <color name="primary1">#0D3D2D</color>
+    <color name="primaryDark">#0A6036</color>
+    <color name="primaryDark1">#1E6B3C</color>          <!-- Deep green for logo bg, text, fields -->
+    <color name="primaryLight">#74A48D</color>
+    <color name="goldAccent">#DE7600</color>
+    <color name="blueAccent">#005BC7</color>
+    <color name="greenAccent">#017307</color>
+    <color name="purpleAccent">#9F04BA</color>
+    <color name="primaryText">#000000</color>
+    <color name="secondaryText">#757575</color>
+    <color name="hint">#9E9E9E</color>
+    <color name="transparent">#00FFFFFF</color>
+    <color name="red">#FF0000</color>
+
+    <color name="gradient_start">#1B5E20</color> <!-- Deep green -->
+    <color name="gradient_end">#E8F5E9</color>   <!-- Light green -->
+
+
+    <color name="primaryGreen">#4CAF50</color>         <!-- Accent for button gradient start -->
+    <color name="lightGreen">#81C784</color>           <!-- Button gradient end -->
+    <color name="cardBackground">#FFFFFF</color>      <!-- White card -->
+    <color name="backgroundGradientStart">#E8F5E9</color> <!-- Very light green top -->
+    <color name="backgroundGradientEnd">#FFFFFF</color>   <!-- Fade to white bottom -->
+    <color name="textHint">#666666</color>
+
+
+    <!-- Add these colors -->
+    <color name="emerald_500">#10B981</color>
+    <color name="emerald_600">#059669</color>
+    <color name="emerald_700">#017354</color>
+
+    <!-- Card Colors -->
+    <color name="card_color_1">#4CAF50</color>
+    <color name="card_color_2">#2196F3</color>
+    <color name="card_color_3">#FF9800</color>
+    <color name="card_color_4">#9C27B0</color>
+
+    <!-- Pastel versions -->
+    <color name="card_color_1_pastel">#E8F7FF</color>  <!-- Pastel green -->
+    <color name="card_color_2_pastel">#FDFFE0</color>  <!-- Pastel blue -->
+    <color name="card_color_3_pastel">#E0FFE5</color>  <!-- Pastel orange -->
+    <color name="card_color_4_pastel">#F9D7FC</color>
+    <color name="_7ba473">#80096246</color>-- Pastel purple -->
+    <color name="gray_100">#F3F4F6</color>
+    <color name="gray_300">#D1D5DB</color>
+    <color name="gray_400">#9CA3AF</color>  <!-- Unchecked outline-এর জন্য -->
+    <color name="gray_500">#6B7280</color>
+
+    <color name="white_alpha_80">#CCFFFFFF</color>
+    <color name="error_600">#D32F2F</color>
+
+</resources>
+

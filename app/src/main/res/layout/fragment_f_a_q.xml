@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+
+
+            <!-- Scrollable Content Area -->
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:paddingTop="5dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="10dp"
+                    android:background="@color/gray_100">
+
+                    <!-- Header -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:orientation="vertical"
+                        android:background="@color/white">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingTop="20dp"
+                            android:paddingBottom="8dp"
+                            android:textColor="@color/primary"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            android:text="Frequently Asked Questions"
+                            android:gravity="center"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingBottom="20dp"
+                            android:textColor="@color/gray_500"
+                            android:textSize="14sp"
+                            android:text="Find answers to common questions \nabout Premium Homes Ltd."
+                            android:gravity="center"/>
+                    </LinearLayout>
+
+                    <!-- Section: General -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/card_general"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardElevation="4dp"
+                        android:layout_marginBottom="3dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/top_radius_back"
+                            android:orientation="vertical">
+
+                            <!-- Header -->
+                            <LinearLayout
+                                android:id="@+id/section_general_header"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:padding="16dp"
+                                android:gravity="center_vertical">
+
+                                <TextView
+                                    android:id="@+id/titleHeader"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Options"
+                                    android:textColor="@color/white"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold" />
+
+                                <ImageView
+                                    android:id="@+id/menu"
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:src="@drawable/baseline_menu_24"
+                                    app:tint="@color/white"
+                                    android:contentDescription="Toggle" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                        <!-- Child items -->
+                        <LinearLayout
+                            android:id="@+id/section_general_content"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:background="@drawable/bottom_radius_back"
+                            android:visibility="gone"
+                            android:paddingLeft="16dp"
+                            android:paddingRight="16dp"
+                            android:paddingBottom="12dp"
+                            android:layout_marginBottom="12dp">
+
+                            <TextView
+                                android:id="@+id/gen"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="General"
+                                android:textColor="@color/white"
+                                android:paddingTop="8dp"
+                                android:paddingBottom="8dp"
+                                android:textSize="14sp"/>
+
+                            <TextView
+                                android:id="@+id/book"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Booking &amp; Payment"
+                                android:textColor="@color/white"
+                                android:paddingTop="8dp"
+                                android:paddingBottom="8dp"
+                                android:textSize="14sp"/>
+
+                            <TextView
+                                android:id="@+id/legal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Legal &amp; Documentation"
+                                android:textColor="@color/white"
+                                android:paddingTop="8dp"
+                                android:paddingBottom="8dp"
+                                android:textSize="14sp"/>
+                        </LinearLayout>
+
+
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="@color/white"
+                        android:layout_marginTop="8dp"
+                        >
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:paddingLeft="15dp"
+                            android:paddingRight="12dp"
+                            android:paddingTop="15dp">
+                            <!-- Green Vertical Line + Title -->
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:layout_marginBottom="10dp">
+
+                                <View
+                                    android:layout_width="4dp"
+                                    android:layout_height="30dp"
+                                    android:background="@color/primary" />
+
+                                <TextView
+                                    android:id="@+id/title"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Legal &amp; Documentation"
+                                    android:textColor="#005C4D"
+                                    android:textSize="24sp"
+                                    android:textStyle="bold"
+                                    android:paddingBottom="4dp"
+                                    android:layout_marginStart="16dp" />
+                            </LinearLayout>
+
+                            <!-- FAQ Card 1 -->
+                            <androidx.cardview.widget.CardView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="12dp"
+                                app:cardCornerRadius="15dp"
+                                app:cardBackgroundColor="#FFFFFF">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:orientation="vertical"
+                                    android:background="@drawable/bg_faq">
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="horizontal"
+                                        android:paddingLeft="20dp"
+                                        android:paddingRight="20dp"
+                                        android:paddingTop="10dp"
+                                        android:paddingBottom="8dp"
+                                        android:gravity="center_vertical">
+
+                                        <TextView
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"
+                                            android:text="What is the booking process?"
+                                            android:textColor="#111111"
+                                            android:textSize="13sp"
+                                            android:textStyle="bold" />
+
+                                        <ImageView
+                                            android:id="@+id/plus_minus_icon1"
+                                            android:layout_width="24dp"
+                                            android:layout_height="24dp"
+                                            android:padding="2dp"
+                                            android:src="@drawable/ic_plus"
+                                            android:background="@drawable/grey_back"
+                                            android:contentDescription="Expand" />
+                                    </LinearLayout>
+                                    <TextView
+                                        android:id="@+id/ans1"
+                                        android:visibility="gone"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:textSize="11sp"
+                                        android:paddingLeft="20dp"
+                                        android:paddingRight="20dp"
+                                        android:paddingBottom="8dp"
+                                        android:text="You will need a valid national ID, passport-sized photographs, and proof of address."/>
+                                </LinearLayout>
+
+
+                            </androidx.cardview.widget.CardView>
+
+                            <!-- FAQ Card 2 -->
+                            <androidx.cardview.widget.CardView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="12dp"
+                                app:cardCornerRadius="15dp"
+                                app:cardBackgroundColor="#FFFFFF">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:orientation="vertical"
+                                    android:background="@drawable/bg_faq">
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal"
+                                        android:paddingLeft="20dp"
+                                        android:paddingRight="20dp"
+                                        android:paddingTop="15dp"
+                                        android:paddingBottom="8dp"
+                                        android:gravity="center_vertical">
+
+                                        <TextView
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"
+                                            android:text="What payment methods do you accept?"
+                                            android:textColor="#111111"
+                                            android:textSize="13sp"
+                                            android:textStyle="bold" />
+
+                                        <ImageView
+                                            android:id="@+id/plus_minus_icon2"
+                                            android:layout_width="24dp"
+                                            android:layout_height="24dp"
+                                            android:padding="2dp"
+                                            android:src="@drawable/ic_plus"
+                                            android:background="@drawable/grey_back"
+                                            android:contentDescription="Expand" />
+                                    </LinearLayout>
+                                    <TextView
+                                        android:id="@+id/ans2"
+                                        android:visibility="gone"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:textSize="11sp"
+                                        android:paddingLeft="20dp"
+                                        android:paddingRight="20dp"
+                                        android:paddingBottom="8dp"
+                                        android:text="Yes, all our properties are legally registered with proper documentation and clear titles.
+
+"/>
+                                </LinearLayout>
+
+
+                            </androidx.cardview.widget.CardView>
+
+                            <!-- FAQ Card 3 -->
+                            <androidx.cardview.widget.CardView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="18dp"
+                                app:cardCornerRadius="15dp"
+                                app:cardBackgroundColor="#FFFFFF">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:orientation="vertical"
+                                    android:background="@drawable/bg_faq">
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal"
+                                        android:paddingLeft="20dp"
+                                        android:paddingRight="20dp"
+                                        android:paddingTop="15dp"
+                                        android:paddingBottom="8dp"
+                                        android:gravity="center_vertical">
+
+                                        <TextView
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"
+                                            android:text="Can I get a payment plan customized to my budget? "
+                                            android:textColor="#111111"
+                                            android:textSize="13sp"
+                                            android:textStyle="bold" />
+
+                                        <ImageView
+                                            android:id="@+id/plus_minus_icon3"
+                                            android:layout_width="24dp"
+                                            android:layout_height="24dp"
+                                            android:padding="2dp"
+                                            android:src="@drawable/ic_plus"
+                                            android:background="@drawable/grey_back"
+                                            android:contentDescription="Expand" />
+                                    </LinearLayout>
+                                    <TextView
+                                        android:id="@+id/ans3"
+                                        android:visibility="gone"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:textSize="11sp"
+                                        android:paddingLeft="20dp"
+                                        android:paddingRight="20dp"
+                                        android:paddingBottom="8dp"
+                                        android:text="The documentation process typically takes 7-10 business days, depending on the verification requirements."/>
+                                </LinearLayout>
+
+
+                            </androidx.cardview.widget.CardView>
+                        </LinearLayout>
+
+
+
+                    </androidx.cardview.widget.CardView>
+
+
+
+                    <!-- Need Help Card -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="2dp"
+                        app:cardBackgroundColor="#FFFFFF"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="24dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="28dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Need help? Talk to our expert."
+                                android:textColor="#111111"
+                                android:textSize="18sp"
+                                android:textStyle="bold"
+                                android:layout_marginBottom="8dp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Talk to our experts or Browse through more flats."
+                                android:textColor="#666666"
+                                android:textSize="14sp"
+                                android:layout_marginBottom="28dp" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btn_contact_us"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Contact Us"
+                                android:textColor="@color/black"
+                                android:backgroundTint="#FFF"
+                                app:cornerRadius="12dp"
+                                app:strokeWidth="1.5dp"
+                                app:strokeColor="@color/gray_500"
+                                app:icon="@drawable/ic_arrow_right_white"
+                                app:iconGravity="textEnd"
+                                app:iconPadding="12dp"
+                                app:iconTint="@color/black"
+                                android:layout_marginBottom="10dp"
+                                android:paddingStart="28dp"
+                                android:paddingEnd="32dp" />
+
+                            <!-- Phone Number Bar -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center"
+                                android:background="@drawable/bg_gradiant_dark_green"
+                                android:padding="12dp">
+
+                                <ImageView
+                                    android:layout_width="32dp"
+                                    android:layout_height="32dp"
+                                    android:src="@drawable/ic_call"
+                                    android:layout_marginEnd="16dp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="+8801982553300"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+
+
+                    <!-- Bottom padding to avoid content being cut off -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="24dp" />
+
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
+
+            <!-- Add more sections below in the same pattern if needed -->
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="24dp" />
+
+</LinearLayout>

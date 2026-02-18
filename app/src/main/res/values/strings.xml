@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">The Premium Homes Ltd</string>
+    <string name="slogan">YOUR DREAM HOME AWAITS</string>
+    <string name="copyright">All rights reserved for Premium Homes Ltd.</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="faq_question_1">What is the booking process?</string>
+    <string name="faq_question_2">What payment methods do you accept?</string>
+    <string name="faq_question_3">Can I get a payment plan customized to my budget?</string>
+</resources>

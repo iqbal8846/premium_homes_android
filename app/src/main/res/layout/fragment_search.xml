@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F5F7FA">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="100dp">
+
+            <!-- Title Section -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardElevation="2dp"
+                >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp"
+                    android:gravity="center"
+                    android:background="@color/white">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Flagship Residential Projects"
+                        android:textColor="#1A1A1A"
+                        android:textSize="22sp"
+                        android:fontFamily="sans-serif-medium"
+                        android:lineHeight="30dp" />
+
+                    <View
+                        android:layout_width="80dp"
+                        android:layout_height="4dp"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/gradient_divider" />
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+
+            <!-- Hidden Button -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/searchTextCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="10dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                app:cardElevation="4dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:visibility="gone"
+                android:foreground="?attr/selectableItemBackground">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="20dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:background="@drawable/gradient_green_light"
+                    android:paddingHorizontal="24dp"
+
+                    >
+
+                    <!-- Search Icon -->
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_search"
+                        app:tint="@color/primaryDark" />
+
+                    <!-- Text -->
+                    <TextView
+                        android:id="@+id/SearchText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text=""
+                        android:textColor="@color/primaryDark"
+                        android:textSize="16sp"
+                        android:fontFamily="sans-serif-medium"
+                        android:textStyle="normal" />
+
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/outline_close_24"
+                        app:tint="@color/primaryDark" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+
+
+            <!-- Filters Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_filters"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:strokeColor="#E5E7EB"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <!-- Header: FILTERS + Reset All -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="FILTERS"
+                            android:textColor="#000000"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:letterSpacing="0.1"
+                            android:fontFamily="monospace" />
+
+
+                        <ImageView
+                            android:id="@+id/close"
+                            android:layout_width="19dp"
+                            android:layout_height="19dp"
+                            android:padding="2dp"
+                            android:src="@drawable/outline_close_24"
+                            app:tint="@color/red"/>
+
+                        <TextView
+                            android:id="@+id/tv_reset_all"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="right"
+                            android:text="Reset All"
+                            android:textColor="#EF4444"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:background="?attr/selectableItemBackgroundBorderless" />
+                    </LinearLayout>
+
+                    <!-- Advanced Search Button -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/custom_advanced_search_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        app:cardCornerRadius="18dp"
+                        app:cardElevation="0dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackgroundBorderless">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/emerald_700"
+                            android:orientation="horizontal"
+                            android:gravity="center"
+                            android:paddingHorizontal="24dp">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_search"
+                                app:tint="#FFFFFF" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="12dp"
+                                android:text="Advanced Search"
+                                android:textColor="#FFFFFF"
+                                android:textSize="16sp"
+                                android:fontFamily="sans-serif-medium" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- COMMUNITIES Section -->
+                    <LinearLayout
+                        android:id="@+id/layout_communities_header"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingVertical="20dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackgroundBorderless">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="COMMUNITIES"
+                            android:textColor="#111111"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:id="@+id/iv_communities_arrow"
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:src="@drawable/ic_down"
+                            app:tint="#6B7280" />
+                    </LinearLayout>
+
+                    <!-- Communities Checkboxes (initially hidden) -->
+                    <!-- Communities Options - UPDATED WITH MaterialCheckBox -->
+                    <LinearLayout
+                        android:id="@+id/layout_communities_options"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <com.google.android.material.checkbox.MaterialCheckBox
+                            android:id="@+id/cb_smart_city"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="The Premium Smart City"
+                            android:textColor="#374151"
+                            android:textSize="15sp"
+                            app:buttonTint="@color/checkbox_tint"
+                            android:paddingStart="4dp" />
+
+                        <com.google.android.material.checkbox.MaterialCheckBox
+                            android:id="@+id/cb_ashulia"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Ashulia Model Town"
+                            android:textColor="#374151"
+                            android:textSize="15sp"
+                            app:buttonTint="@color/checkbox_tint"
+                            android:paddingStart="4dp" />
+
+                        <com.google.android.material.checkbox.MaterialCheckBox
+                            android:id="@+id/cb_royal_city"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="The Premium Royal City"
+                            android:textColor="#374151"
+                            android:textSize="15sp"
+                            app:buttonTint="@color/checkbox_tint"
+                            android:paddingStart="4dp" />
+
+                        <com.google.android.material.checkbox.MaterialCheckBox
+                            android:id="@+id/cb_bashundhara"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Bashundhara Residential Area"
+                            android:textColor="#374151"
+                            android:textSize="15sp"
+                            app:buttonTint="@color/checkbox_tint"
+                            android:paddingStart="4dp" />
+                    </LinearLayout>
+
+                    <!-- Divider -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E5E7EB"
+                        android:layout_marginTop="8dp" />
+
+                    <!-- PRICE RANGE Section -->
+                    <LinearLayout
+                        android:id="@+id/layout_price_range_header"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingVertical="20dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackgroundBorderless">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="PRICE RANGE"
+                            android:textColor="#111111"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:id="@+id/iv_price_arrow"
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:src="@drawable/ic_down"
+                            app:tint="#6B7280" />
+                    </LinearLayout>
+
+                    <!-- Price Range Checkboxes (initially hidden) -->
+                    <!-- Price Range Options - UPDATED WITH MaterialCheckBox -->
+                    <LinearLayout
+                        android:id="@+id/layout_price_range_options"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <com.google.android.material.checkbox.MaterialCheckBox
+                            android:id="@+id/cb_under_50"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Under 50 Lac BDT"
+                            android:textColor="#374151"
+                            android:textSize="14sp"
+                            app:buttonTint="@color/checkbox_tint"
+                            android:paddingStart="4dp" />
+
+                        <com.google.android.material.checkbox.MaterialCheckBox
+                            android:id="@+id/cb_50_1cr"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="50 Lac - 1 Crore BDT"
+                            android:textColor="#374151"
+                            android:textSize="14sp"
+                            app:buttonTint="@color/checkbox_tint"
+                            android:paddingStart="4dp" />
+
+                        <com.google.android.material.checkbox.MaterialCheckBox
+                            android:id="@+id/cb_1_2cr"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="1 Crore - 2 Crore BDT"
+                            android:textColor="#374151"
+                            android:textSize="14sp"
+                            app:buttonTint="@color/checkbox_tint"
+                            android:paddingStart="4dp" />
+
+                        <com.google.android.material.checkbox.MaterialCheckBox
+                            android:id="@+id/cb_2_5cr"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="2 Crore - 5 Crore BDT"
+                            android:textColor="#374151"
+                            android:textSize="14sp"
+                            app:buttonTint="@color/checkbox_tint"
+                            android:paddingStart="4dp" />
+
+                        <com.google.android.material.checkbox.MaterialCheckBox
+                            android:id="@+id/cb_5plus"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Above 5 Crore BDT"
+                            android:textColor="#374151"
+                            android:textSize="14sp"
+                            app:buttonTint="@color/checkbox_tint"
+                            android:paddingStart="4dp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Showing projects count -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Showing"
+                    android:textColor="#6B7280"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_projects_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="100"
+                    android:textColor="#000000"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="projects"
+                    android:textColor="#6B7280"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <!-- Projects RecyclerView -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_projects"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingHorizontal="5dp"
+                android:nestedScrollingEnabled="false" />
+
+        </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

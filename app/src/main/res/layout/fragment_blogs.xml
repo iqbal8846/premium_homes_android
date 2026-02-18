@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.BlogsFragment"
+    android:orientation="vertical"
+    android:paddingBottom="60dp"
+    android:background="@color/white"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- Title & Subtitles -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:paddingLeft="15dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="4dp"
+            android:textStyle="bold"
+            android:textColor="@color/primary1"
+            android:fontFamily="serif"
+            android:textSize="32sp"
+            android:text="Our Blog" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@color/gray_400"
+            android:text="Insights, stories, and expert advice on the latest developments in real estate and property investment"
+            android:layout_marginBottom="10dp"
+            android:gravity="left"
+            android:paddingLeft="15dp"
+            android:paddingRight="10dp"/>
+
+        <!-- Blog Lists -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:id="@+id/blogsList"/>
+
+        <!-- Stay Updated -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:background="@color/primary1"
+            android:gravity="center">
+
+            <!-- Title -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Stay Updated"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Subtitle -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Subscribe to our newsletter for the \nlatest insights and updates"
+                android:textSize="14sp"
+                android:textColor="@android:color/white"
+                android:alpha="0.9"
+                android:layout_marginBottom="24dp"
+                android:gravity="center" />
+
+            <!-- Input + Button Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginBottom="20dp">
+
+                <!-- Email Input -->
+                <EditText
+                    android:id="@+id/et_email"
+                    android:layout_width="0dp"
+                    android:layout_height="44dp"
+                    android:layout_weight="1"
+                    android:hint="Enter your email"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:textColor="@android:color/white"
+                    android:textColorHint="@color/gray_100"
+                    android:background="@drawable/button_outline_white"
+                    android:inputType="textEmailAddress" />
+
+                <!-- Subscribe Button -->
+                <Button
+                    android:id="@+id/btn_subscribe"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:text="Subscribe Now"
+                    android:textStyle="bold"
+                    android:textAllCaps="false"
+                    android:textColor="#0B5D43"
+                    android:backgroundTint="@color/white"
+                    android:layout_marginStart="12dp"
+                    android:paddingStart="24dp"
+                    android:paddingEnd="24dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</androidx.core.widget.NestedScrollView>
