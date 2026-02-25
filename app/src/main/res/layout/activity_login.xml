@@ -164,7 +164,7 @@
         android:id="@+id/tv_register"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Don't have an account? Register"
+        android:text="Request to create an account."
         android:textColor="@color/primaryDark"
         android:textStyle="bold"
         android:layout_marginTop="24dp"

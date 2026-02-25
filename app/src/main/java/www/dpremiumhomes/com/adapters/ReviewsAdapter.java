@@ -1,13 +1,16 @@
 package www.dpremiumhomes.com.adapters;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.recyclerview.widget.RecyclerView;
+import android.widget.Toast;
+
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
@@ -41,35 +44,44 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.VH> {
 
         ReviewModel m = list.get(position);
 
-        h.tvQuote.setText(m.title);
-        h.tvName.setText(m.name);
-        h.tvRole.setText(m.role);
-        h.tvDate.setText(m.date);
+        h.tvQuote.setText(m.getTitle());
+        h.tvName.setText(m.getName());
+        h.tvRole.setText(m.getRole());
+        h.tvDate.setText(m.getDate());
 
         h.progressBar.setVisibility(View.VISIBLE);
 
         lifecycleOwner.getLifecycle().addObserver(h.playerView);
 
-        h.playerView.addYouTubePlayerListener(
-                new AbstractYouTubePlayerListener() {
+        // Check if videoId is valid
+        if (m.getVideoId() != null && !m.getVideoId().isEmpty()) {
+            h.playerView.addYouTubePlayerListener(
+                    new AbstractYouTubePlayerListener() {
+                        @Override
+                        public void onReady(@NonNull YouTubePlayer youTubePlayer) {
+                            // Load video but don't autoplay to save data
+                            youTubePlayer.cueVideo(m.getVideoId(), 0);
+                        }
 
-                    @Override
-                    public void onReady(@NonNull YouTubePlayer youTubePlayer) {
-                        // 🔥 AUTOPLAY
-                        youTubePlayer.loadVideo(m.videoId, 0);
-                    }
+                        @Override
+                        public void onStateChange(
+                                @NonNull YouTubePlayer youTubePlayer,
+                                @NonNull PlayerConstants.PlayerState state) {
 
-                    @Override
-                    public void onStateChange(
-                            @NonNull YouTubePlayer youTubePlayer,
-                            @NonNull PlayerConstants.PlayerState state) {
-
-                        if (state == PlayerConstants.PlayerState.PLAYING) {
-                            h.progressBar.setVisibility(View.GONE);
+                            if (state == PlayerConstants.PlayerState.PLAYING ||
+                                    state == PlayerConstants.PlayerState.VIDEO_CUED) {
+                                h.progressBar.setVisibility(View.GONE);
+                            }
                         }
                     }
-                }
-        );
+            );
+        } else {
+            // Hide player and show error if no video
+            h.playerView.setVisibility(View.GONE);
+            h.progressBar.setVisibility(View.GONE);
+            Toast.makeText(h.itemView.getContext(),
+                    "Video not available for this review", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

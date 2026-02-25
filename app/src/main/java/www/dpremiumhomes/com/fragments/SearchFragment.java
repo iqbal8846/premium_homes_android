@@ -185,7 +185,7 @@ public class SearchFragment extends Fragment {
                         for (int i = 0; i < array.length(); i++) {
                             JSONObject o = array.getJSONObject(i);
 
-                            // Parse filters object with safer handling
+                            // Parse filters object with the correct property names from the actual data
                             JSONObject filters = o.optJSONObject("filters");
                             List<String> bathrooms = new ArrayList<>();
                             List<String> flatSizes = new ArrayList<>();
@@ -193,10 +193,10 @@ public class SearchFragment extends Fragment {
                             List<String> filterLocations = new ArrayList<>();
 
                             if (filters != null) {
-                                // Parse bathrooms
-                                if (filters.has("bathrooms")) {
+                                // FIX: Parse bathroomCounts instead of bathrooms
+                                if (filters.has("bathroomCounts")) {
                                     try {
-                                        JSONArray bathArray = filters.optJSONArray("bathrooms");
+                                        JSONArray bathArray = filters.optJSONArray("bathroomCounts");
                                         if (bathArray != null) {
                                             for (int j = 0; j < bathArray.length(); j++) {
                                                 String bathValue = bathArray.optString(j, "");
@@ -206,43 +206,31 @@ public class SearchFragment extends Fragment {
                                             }
                                         }
                                     } catch (Exception e) {
-                                        Log.e("SearchFragment", "Error parsing bathrooms: " + e.getMessage());
+                                        Log.e("SearchFragment", "Error parsing bathroomCounts: " + e.getMessage());
                                     }
                                 }
 
-                                // Parse flatSizes - FIX: Check if it exists and handle properly
-                                if (filters.has("flatSizes")) {
+                                // FIX: Parse availableSizes instead of flatSizes
+                                if (filters.has("availableSizes")) {
                                     try {
-                                        Object flatSizesObj = filters.opt("flatSizes");
-                                        if (flatSizesObj instanceof JSONArray) {
-                                            JSONArray sizeArray = (JSONArray) flatSizesObj;
+                                        JSONArray sizeArray = filters.optJSONArray("availableSizes");
+                                        if (sizeArray != null) {
                                             for (int j = 0; j < sizeArray.length(); j++) {
                                                 String sizeValue = sizeArray.optString(j, "");
                                                 if (!sizeValue.isEmpty()) {
                                                     flatSizes.add(sizeValue);
                                                 }
                                             }
-                                        } else if (flatSizesObj instanceof JSONObject) {
-                                            JSONObject sizeObj = (JSONObject) flatSizesObj;
-                                            // Use keys() iterator instead of numeric index
-                                            Iterator<String> keys = sizeObj.keys();
-                                            while (keys.hasNext()) {
-                                                String key = keys.next();
-                                                String sizeValue = sizeObj.optString(key, "");
-                                                if (!sizeValue.isEmpty()) {
-                                                    flatSizes.add(sizeValue);
-                                                }
-                                            }
                                         }
                                     } catch (Exception e) {
-                                        Log.e("SearchFragment", "Error parsing flatSizes: " + e.getMessage());
+                                        Log.e("SearchFragment", "Error parsing availableSizes: " + e.getMessage());
                                     }
                                 }
 
-                                // Parse balconies
-                                if (filters.has("balconies")) {
+                                // FIX: Parse balconyCounts instead of balconies
+                                if (filters.has("balconyCounts")) {
                                     try {
-                                        JSONArray balconyArray = filters.optJSONArray("balconies");
+                                        JSONArray balconyArray = filters.optJSONArray("balconyCounts");
                                         if (balconyArray != null) {
                                             for (int j = 0; j < balconyArray.length(); j++) {
                                                 String balconyValue = balconyArray.optString(j, "");
@@ -252,29 +240,17 @@ public class SearchFragment extends Fragment {
                                             }
                                         }
                                     } catch (Exception e) {
-                                        Log.e("SearchFragment", "Error parsing balconies: " + e.getMessage());
+                                        Log.e("SearchFragment", "Error parsing balconyCounts: " + e.getMessage());
                                     }
                                 }
 
-                                // Parse locations - FIX: Check if it exists and handle properly
+                                // FIX: Parse locations (this one is correct in the data)
                                 if (filters.has("locations")) {
                                     try {
-                                        Object locsObj = filters.opt("locations");
-                                        if (locsObj instanceof JSONArray) {
-                                            JSONArray locArray = (JSONArray) locsObj;
+                                        JSONArray locArray = filters.optJSONArray("locations");
+                                        if (locArray != null) {
                                             for (int j = 0; j < locArray.length(); j++) {
                                                 String locValue = locArray.optString(j, "");
-                                                if (!locValue.isEmpty()) {
-                                                    filterLocations.add(locValue);
-                                                }
-                                            }
-                                        } else if (locsObj instanceof JSONObject) {
-                                            JSONObject locObj = (JSONObject) locsObj;
-                                            // Use keys() iterator instead of numeric index
-                                            Iterator<String> keys = locObj.keys();
-                                            while (keys.hasNext()) {
-                                                String key = keys.next();
-                                                String locValue = locObj.optString(key, "");
                                                 if (!locValue.isEmpty()) {
                                                     filterLocations.add(locValue);
                                                 }
@@ -312,14 +288,6 @@ public class SearchFragment extends Fragment {
                     } catch (Exception e) {
                         Log.e("SearchFragment", "Error parsing JSON: " + e.getMessage());
                         e.printStackTrace();
-
-                        // Try to get more details about the error
-                        try {
-                            Log.d("SearchFragment", "Response: " + response.toString());
-                        } catch (Exception ex) {
-                            Log.e("SearchFragment", "Cannot get response string");
-                        }
-
                         finishLoading();
                     }
                     finishLoading();
@@ -380,7 +348,7 @@ public class SearchFragment extends Fragment {
                     break;
                 }
             }
-            if (!bathMatch && !selectedBaths.isEmpty()) return false;
+            if (!bathMatch) return false;
         }
 
         if (!selectedBeds.isEmpty()) {
@@ -392,7 +360,7 @@ public class SearchFragment extends Fragment {
                     break;
                 }
             }
-            if (!bedMatch && !selectedBeds.isEmpty()) return false;
+            if (!bedMatch) return false;
         }
 
         if (!selectedFlatSizes.isEmpty()) {
@@ -403,7 +371,7 @@ public class SearchFragment extends Fragment {
                     break;
                 }
             }
-            if (!sizeMatch && !selectedFlatSizes.isEmpty()) return false;
+            if (!sizeMatch) return false;
         }
 
         if (!selectedBalconies.isEmpty()) {
@@ -415,7 +383,7 @@ public class SearchFragment extends Fragment {
                     break;
                 }
             }
-            if (!balconyMatch && !selectedBalconies.isEmpty()) return false;
+            if (!balconyMatch) return false;
         }
 
         if (!selectedLocations.isEmpty()) {
@@ -656,6 +624,10 @@ public class SearchFragment extends Fragment {
                         parent.currentSearchQuery = searchQuery;
                         parent.SearchText.setText("Search results for: \"" + searchQuery + "\"");
                         parent.searchTextCard.setVisibility(VISIBLE);
+                    } else {
+                        parent.currentSearchQuery = "";
+                        parent.searchTextCard.setVisibility(GONE);
+                        parent.SearchText.setText("All Properties");
                     }
 
                     parent.applyCurrentFilters();
@@ -756,7 +728,8 @@ public class SearchFragment extends Fragment {
                     "830", "850", "870", "1000", "1005", "1010", "1100", "1230",
                     "1250", "1260", "1310", "1395", "1460", "1520", "1540", "1550",
                     "1565", "1600", "1615", "1630", "1655", "1680", "1790", "2055",
-                    "2150", "2190", "2250", "2600", "3100");
+                    "2150", "2190", "2250", "2600", "3100"
+            );
 
             // Balcony chips
             addChips(chipBalcony, "1 Balcony", "2 Balcony", "3 Balcony", "4 Balcony", "6 Balcony", "7 Balcony");
@@ -781,11 +754,6 @@ public class SearchFragment extends Fragment {
                 chip.setChipStrokeColorResource(R.color.gray_300);
                 chip.setChipStrokeWidth(1.5f);
                 chip.setChipBackgroundColorResource(android.R.color.white);
-
-                // Set different styling for location chips (single selection)
-                if (group == chipLocation) {
-                    chip.setChipBackgroundColorResource(R.color.gray_300);
-                }
 
                 group.addView(chip);
             }
@@ -840,7 +808,7 @@ public class SearchFragment extends Fragment {
         private int calculateLiveFilteredCount() {
             SearchFragment parent = (SearchFragment) getParentFragment();
             if (parent == null || parent.fullList.isEmpty()) {
-                return parent != null ? parent.fullList.size() : 100;
+                return parent != null ? parent.fullList.size() : 0;
             }
 
             int count = 0;
@@ -988,11 +956,8 @@ public class SearchFragment extends Fragment {
             previewFlatSizes.clear();
             previewBalconies.clear();
             previewLocations.clear();
-
-            SearchFragment parent = (SearchFragment) getParentFragment();
-            if (parent != null) {
-                parent.resetAll();
-            }
+            searchQuery = "";
+            searchEditText.setText("");
 
             updatePreviewAndBadges();
         }

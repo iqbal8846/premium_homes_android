@@ -266,6 +266,7 @@ public class HomeFragment extends Fragment {
         });
     }
 
+//CCTV live progress
     private void LiveProgress() {
         List<ProgressItem> list = new ArrayList<>();
         list.add(new ProgressItem(
@@ -707,36 +708,58 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupImageSliderFromApi() {
-        String url = "https://premium-api.dvalleybd.com/projects.php?action=get-all-projects";
+
+        String url = "https://premium-api.dvalleybd.com/slides.php?action=get-all-slides";
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET, url, null,
                 response -> {
-                    try {
-                        JSONArray arr = response.getJSONArray("allProperties");
-                        ArrayList<SlideModel> slides = new ArrayList<>();
 
-                        for (int i = 0; i < Math.min(5, arr.length()); i++) {
-                            JSONObject o = arr.getJSONObject(i);
-                            slides.add(new SlideModel(o.getString("image"), o.getString("name"), ScaleTypes.FIT));
+                    try {
+                        if (response.getBoolean("success")) {
+
+                            JSONArray arr = response.getJSONArray("slides");
+                            ArrayList<SlideModel> slides = new ArrayList<>();
+
+                            for (int i = 0; i < arr.length(); i++) {
+
+                                JSONObject obj = arr.getJSONObject(i);
+
+                                String title = obj.getString("title");
+                                String subtitle = obj.getString("subtitle");
+                                String image = obj.getString("image");
+
+                                // title + subtitle একসাথে caption হিসেবে দেখাবে
+                                String caption = title + "\n" + subtitle;
+
+                                slides.add(new SlideModel(image, caption, ScaleTypes.FIT));
+                            }
+
+                            imageSlider.setImageList(slides, ScaleTypes.FIT);
+                            Log.d("HomeFragment", "Image slider loaded with " + slides.size() + " slides");
+
+                        } else {
+                            Log.e("HomeFragment", "API success false");
                         }
-                        imageSlider.setImageList(slides, ScaleTypes.FIT);
-                        Log.d("HomeFragment", "Image slider loaded with " + slides.size() + " images");
+
                     } catch (Exception e) {
-                        Log.e("HomeFragment", "Error loading image slider: " + e.getMessage());
+                        Log.e("HomeFragment", "Parsing error: " + e.getMessage());
                     } finally {
                         finishLoading();
                     }
+
                 },
                 error -> {
-                    Log.e("HomeFragment", "Image slider API error: " + error.getMessage());
+                    Log.e("HomeFragment", "API error: " + error.getMessage());
                     failLoading();
                 }
         );
 
-        Volley.newRequestQueue(getActivity()).add(request);
+        Volley.newRequestQueue(requireContext()).add(request);
     }
 
+
+    /**
     private void setupClientReviews() {
         reviewLists.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
         ArrayList<DirectVideoModel> list = new ArrayList<>();
@@ -744,6 +767,54 @@ public class HomeFragment extends Fragment {
         list.add(new DirectVideoModel("ফ্ল্যাট কেনার আগে ভিডিও টা একবার দেখে নিতে পারেন", "qM5_UKR-vzk"));
         directVideoAdapter = new DirectVideoAdapter(getActivity(), getActivity(), list);
         reviewLists.setAdapter(directVideoAdapter);
+    }
+    **/
+
+    private void setupClientReviews() {
+
+        reviewLists.setLayoutManager(
+                new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false)
+        );
+
+        ArrayList<DirectVideoModel> list = new ArrayList<>();
+
+        String url = "https://premium-api.dvalleybd.com/reviews.php?action=get-all-reviews";
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.GET, url, null,
+                response -> {
+
+                    try {
+
+                        JSONArray arr = response.getJSONArray("reviews");
+
+                        for (int i = 0; i < arr.length(); i++) {
+
+                            JSONObject obj = arr.getJSONObject(i);
+
+                            list.add(new DirectVideoModel(
+                                    obj.getString("name"),
+                                    obj.getString("role"),
+                                    obj.getString("project"),
+                                    obj.getString("review"),
+                                    obj.getString("date"),
+                                    obj.getInt("rating"),
+                                    obj.getString("videoUrl")
+                            ));
+                        }
+
+                        directVideoAdapter = new DirectVideoAdapter(getActivity(), getViewLifecycleOwner(), list);
+                        reviewLists.setAdapter(directVideoAdapter);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                },
+                error -> error.printStackTrace()
+        );
+
+        Volley.newRequestQueue(getActivity()).add(request);
     }
 
     // Three helpers for progressBar - FIXED VERSION

@@ -29,6 +29,7 @@ public class DirectVideoAdapter extends RecyclerView.Adapter<DirectVideoAdapter.
     private Context context;
     LifecycleOwner lifecycleOwner;
     private ArrayList<DirectVideoModel> list;
+    //TextView tvTitle;
 
     public DirectVideoAdapter(Context context,LifecycleOwner lifecycleOwner, ArrayList<DirectVideoModel> list) {
         this.context = context;
@@ -43,7 +44,7 @@ public class DirectVideoAdapter extends RecyclerView.Adapter<DirectVideoAdapter.
                 .inflate(R.layout.video_review_item, parent, false);
         return new ViewHolder(view);
     }
-
+/**
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         DirectVideoModel video = list.get(position);
@@ -75,6 +76,45 @@ public class DirectVideoAdapter extends RecyclerView.Adapter<DirectVideoAdapter.
         });
     }
 
+    **/
+
+@Override
+public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+
+    DirectVideoModel video = list.get(position);
+
+    // ✅ Text from API
+    //holder.tvTitle.setText(video.getName());
+    //holder.tvSubTitle.setText(video.getProject());
+
+    // ✅ Extracted YouTube ID from full URL
+    String videoId = video.getVideoId();
+
+    // ✅ Thumbnail
+    String maxRes = "https://img.youtube.com/vi/" + videoId + "/maxresdefault.jpg";
+    String hq = "https://img.youtube.com/vi/" + videoId + "/hqdefault.jpg";
+    String mq = "https://img.youtube.com/vi/" + videoId + "/mqdefault.jpg";
+    String def = "https://img.youtube.com/vi/" + videoId + "/default.jpg";
+
+    Glide.with(context)
+            .load(maxRes)
+            .error(
+                    Glide.with(context)
+                            .load(hq)
+                            .error(
+                                    Glide.with(context)
+                                            .load(mq)
+                                            .error(def)
+                            )
+            )
+            .placeholder(R.drawable.premium_banner)
+            .into(holder.ivThumbnail);
+
+    holder.itemView.setOnClickListener(v ->
+            showVideoDialog(videoId, video.getName())
+    );
+}
+
     @Override
     public int getItemCount() {
         return list.size();
@@ -104,11 +144,11 @@ public class DirectVideoAdapter extends RecyclerView.Adapter<DirectVideoAdapter.
         YouTubePlayerView youTubePlayerView =
                 view.findViewById(R.id.youtubePlayerView);
 
-        TextView tvTitle = view.findViewById(R.id.tvDialogTitle);
+        //tvTitle = view.findViewById(R.id.tvDialogTitle);
         ImageView btnClose = view.findViewById(R.id.btnClose);
 
         if (title != null && !title.isEmpty()) {
-            tvTitle.setText(title);
+            //tvTitle.setText(title);
         }
 
         // IMPORTANT: attach lifecycle

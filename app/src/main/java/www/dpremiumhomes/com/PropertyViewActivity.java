@@ -1,11 +1,26 @@
 package www.dpremiumhomes.com;
 
+import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
-import android.widget.Button;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,6 +28,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.FileProvider;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -23,6 +39,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
@@ -31,12 +48,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import www.dpremiumhomes.com.adapters.AmenityAdapter;
 import www.dpremiumhomes.com.adapters.SpecificationAdapter;
 import www.dpremiumhomes.com.adapters.UnitAdapter;
+import www.dpremiumhomes.com.helpers.SessionManager;
 import www.dpremiumhomes.com.models.AmenityItem;
 import www.dpremiumhomes.com.models.SpecificationItem;
 import www.dpremiumhomes.com.models.UnitItem;
@@ -48,28 +70,48 @@ public class PropertyViewActivity extends AppCompatActivity {
             "https://premium-api.dvalleybd.com/projects.php?action=get-property-by-id&id=";
 
     /* ======================= UI ======================= */
+    private SessionManager session;
     private TextView propertyLocation, propertyTitle, propertyBedrooms, propertyName,
-            propertyDescription, tvApartmentsNumber, tvShareNumber, mapLocation;
+            propertyDescription, tvApartmentsNumber, tvShareNumber, mapLocation, submitText;
 
-    private ImageView propertyHeroImage, propertyImage2, propertyImage3, mapImage;
-    private CardView savePropertyBtn, contactAgentBtn; // Changed from Button to CardView
-    private CardView downloadBrochureBtn, submitContactBtn; // Changed from Button to CardView
-    //private Button submitContactBtn; // This remains Button
+    private ImageView propertyHeroImage, propertyImage2, propertyImage3, mapImage, fabSave1;
+    private CardView savePropertyBtn, contactAgentBtn, downloadBrochureBtn, submitContactBtn, openBrochureBtn;
     private FloatingActionButton fabSave;
-    private ProgressBar progressBar;
+    private ProgressBar progressBar, submitProgress, downloadProgressBar;
+    private TextView downloadProgressText;
+    private LinearLayout downloadButtonContent;
     private View mainContent;
 
     private EditText nameEditText, phoneEditText, emailEditText, messageEditText;
-
     private RecyclerView specsRecyclerView, unitsRecyclerView, amenitiesRecyclerView;
 
     /* ======================= DATA ======================= */
     private String propertyId;
+    private String propertyName_str = "";
+    private String brochureLink = "";
+    private String fileName = "";
     private RequestQueue requestQueue;
+    private static final String TAG = "PropertyViewActivity";
+    private long downloadId = -1;
+    private DownloadManager downloadManager;
 
     private SpecificationAdapter specificationAdapter;
     private UnitAdapter unitAdapter;
     private AmenityAdapter amenityAdapter;
+
+    /* ======================= BROADCAST RECEIVER ======================= */
+    private BroadcastReceiver downloadReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
+                long completedDownloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+                if (completedDownloadId == downloadId) {
+                    checkDownloadStatus();
+                }
+            }
+        }
+    };
 
     /* ======================= LIFECYCLE ======================= */
     @Override
@@ -81,6 +123,13 @@ public class PropertyViewActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(getResources().getColor(R.color.primary));
         }
+
+        session = new SessionManager(this);
+        requestQueue = Volley.newRequestQueue(this);
+        downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+
+        // Register download receiver with proper flags for Android 14+
+        registerDownloadReceiver();
 
         applyInsets();
         initViews();
@@ -94,21 +143,27 @@ public class PropertyViewActivity extends AppCompatActivity {
             return;
         }
 
-        requestQueue = Volley.newRequestQueue(this);
         fetchPropertyDetails();
     }
 
-    private void showLoading(boolean show) {
-        if (show) {
-            progressBar.setVisibility(View.VISIBLE);
-            mainContent.setVisibility(View.GONE);
+    /**
+     * Register download receiver with proper flags for Android 14+
+     */
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
+    private void registerDownloadReceiver() {
+        IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+ (API 33)
+            // For Android 13 and above, specify RECEIVER_EXPORTED
+            registerReceiver(downloadReceiver, filter, Context.RECEIVER_EXPORTED);
         } else {
-            progressBar.setVisibility(View.GONE);
-            mainContent.setVisibility(View.VISIBLE);
+            // For older versions, regular registration is fine
+            registerReceiver(downloadReceiver, filter);
         }
     }
 
     /* ======================= UI SETUP ======================= */
+
 
     private void applyInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content),
@@ -134,15 +189,14 @@ public class PropertyViewActivity extends AppCompatActivity {
         propertyImage3 = findViewById(R.id.propertyImage3);
         mapImage = findViewById(R.id.mapImage);
 
-        // All these are CardView in XML, so use CardView type
         savePropertyBtn = findViewById(R.id.savePropertyBtn);
         contactAgentBtn = findViewById(R.id.contactAgentBtn);
         downloadBrochureBtn = findViewById(R.id.downloadBrochureBtn);
-
-        // Only this one is actually a Button in XML
+        openBrochureBtn = findViewById(R.id.openBrochureBtn);
         submitContactBtn = findViewById(R.id.submitContactBtn);
-
         fabSave = findViewById(R.id.fabSave);
+        fabSave1 = findViewById(R.id.fabSave1);
+
 
         nameEditText = findViewById(R.id.nameEditText);
         phoneEditText = findViewById(R.id.phoneEditText);
@@ -150,28 +204,33 @@ public class PropertyViewActivity extends AppCompatActivity {
         messageEditText = findViewById(R.id.messageEditText);
 
         progressBar = findViewById(R.id.progressBar);
+        submitProgress = findViewById(R.id.submitProgress);
+        submitText = findViewById(R.id.submitText);
+        downloadProgressBar = findViewById(R.id.downloadProgressBar);
+        downloadProgressText = findViewById(R.id.downloadProgressText);
+        downloadButtonContent = findViewById(R.id.downloadButtonContent);
         mainContent = findViewById(R.id.mainContent);
-        findViewById(R.id.backButton).setOnClickListener(v -> finish());
 
-        specsRecyclerView = findViewById(R.id.specificationsRecyclerView);
-        unitsRecyclerView = findViewById(R.id.unitsList);
-        amenitiesRecyclerView = findViewById(R.id.luxuryApartments_amenities);
+        findViewById(R.id.backButton).setOnClickListener(v -> finish());
     }
 
     private void initRecyclerViews() {
         // Specifications RecyclerView
+        specsRecyclerView = findViewById(R.id.specificationsRecyclerView);
         specsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         specificationAdapter = new SpecificationAdapter(new ArrayList<>());
         specsRecyclerView.setAdapter(specificationAdapter);
         specsRecyclerView.setNestedScrollingEnabled(false);
 
         // Units RecyclerView
+        unitsRecyclerView = findViewById(R.id.unitsList);
         unitsRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
         unitAdapter = new UnitAdapter(new ArrayList<>());
         unitsRecyclerView.setAdapter(unitAdapter);
         unitsRecyclerView.setNestedScrollingEnabled(false);
 
         // Amenities RecyclerView (Grid with 2 columns)
+        amenitiesRecyclerView = findViewById(R.id.luxuryApartments_amenities);
         amenitiesRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         amenityAdapter = new AmenityAdapter(new ArrayList<>());
         amenitiesRecyclerView.setAdapter(amenityAdapter);
@@ -179,25 +238,266 @@ public class PropertyViewActivity extends AppCompatActivity {
     }
 
     private void initClickListeners() {
-        savePropertyBtn.setOnClickListener(v ->
-                Toast.makeText(this, "Property saved!", Toast.LENGTH_SHORT).show());
+        savePropertyBtn.setOnClickListener(v -> {
+            if (session.isLoggedIn()) {
+                savePropertyToWishlist();
+                fabSave1.setImageResource(R.drawable.ic_favorite);
+            } else {
+                showLoginDialog();
+            }
+        });
 
-        contactAgentBtn.setOnClickListener(v ->
-                Toast.makeText(this, "Contacting agent...", Toast.LENGTH_SHORT).show());
+        contactAgentBtn.setOnClickListener(v -> callAgent());
+        fabSave.setOnClickListener(v -> {
+            /**openFavoritesActivity(); **/
+            if (session.isLoggedIn()) {
+                savePropertyToWishlist();
+                fabSave.setImageResource(R.drawable.ic_favorite);
+            } else {
+                showLoginDialog();
+            }
 
-        fabSave.setOnClickListener(v ->
-                Toast.makeText(this, "Saved to favorites!", Toast.LENGTH_SHORT).show());
 
-        downloadBrochureBtn.setOnClickListener(v ->
-                Toast.makeText(this, "Downloading brochure...", Toast.LENGTH_SHORT).show());
-
+        } );
+        downloadBrochureBtn.setOnClickListener(v -> downloadBrochure());
+        openBrochureBtn.setOnClickListener(v -> openDownloadedBrochure());
         submitContactBtn.setOnClickListener(v -> submitContactForm());
 
         findViewById(R.id.viewOnMapBtn).setOnClickListener(v ->
-                Toast.makeText(this, "Opening map...", Toast.LENGTH_SHORT).show());
+                Toast.makeText(this, "Opening map...", Toast.LENGTH_SHORT).show()
+        );
     }
 
-    /* ======================= API ======================= */
+    /* ======================= DOWNLOAD BROCHURE WITH PROGRESS ======================= */
+
+    private void downloadBrochure() {
+        if (brochureLink == null || brochureLink.isEmpty()) {
+            Toast.makeText(this, "Brochure not available", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Check if file already exists
+        fileName = propertyName_str.replaceAll("[^a-zA-Z0-9]", "_") + "_Brochure.pdf";
+        File file = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOWNLOADS), fileName);
+
+        if (file.exists()) {
+            // File already downloaded, show open button
+            showOpenButton();
+            Toast.makeText(this, "Brochure already downloaded", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            // Show progress on button
+            showDownloadProgress(true);
+
+            // Convert Google Drive link to direct download link if needed
+            String downloadUrl = convertToDirectDownloadLink(brochureLink);
+
+            // Create DownloadManager request
+            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(downloadUrl));
+            request.setTitle(propertyName_str + " Brochure");
+            request.setDescription("Downloading property brochure...");
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+            request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI |
+                    DownloadManager.Request.NETWORK_MOBILE);
+
+            // Enqueue download
+            downloadId = downloadManager.enqueue(request);
+
+            // Start checking progress
+            startDownloadProgressCheck();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showDownloadProgress(false);
+            Toast.makeText(this, "Failed to start download", Toast.LENGTH_SHORT).show();
+
+            // Fallback: Open in browser
+            openBrochureInBrowser();
+        }
+    }
+
+    private void startDownloadProgressCheck() {
+        new Thread(() -> {
+            boolean downloading = true;
+            while (downloading) {
+                DownloadManager.Query q = new DownloadManager.Query();
+                q.setFilterById(downloadId);
+                Cursor cursor = downloadManager.query(q);
+
+                if (cursor != null && cursor.moveToFirst()) {
+                    int bytes_downloaded = cursor.getInt(
+                            cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
+                    int bytes_total = cursor.getInt(
+                            cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
+                    int status = cursor.getInt(
+                            cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS));
+
+                    if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                        downloading = false;
+                        runOnUiThread(() -> {
+                            showDownloadProgress(false);
+                            Toast.makeText(PropertyViewActivity.this,
+                                    "Download complete!", Toast.LENGTH_LONG).show();
+                            showOpenButton();
+                        });
+                    } else if (status == DownloadManager.STATUS_FAILED) {
+                        downloading = false;
+                        runOnUiThread(() -> {
+                            showDownloadProgress(false);
+                            Toast.makeText(PropertyViewActivity.this,
+                                    "Download failed", Toast.LENGTH_SHORT).show();
+                        });
+                    } else if (status == DownloadManager.STATUS_RUNNING) {
+                        if (bytes_total > 0) {
+                            int progress = (int) ((bytes_downloaded * 100L) / bytes_total);
+                            runOnUiThread(() -> updateDownloadProgress(progress));
+                        }
+                    }
+                    cursor.close();
+                }
+
+                try {
+                    Thread.sleep(1000); // Update every second
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    private void showDownloadProgress(boolean show) {
+        if (show) {
+            downloadButtonContent.setVisibility(View.GONE);
+            downloadProgressBar.setVisibility(View.VISIBLE);
+            downloadProgressText.setVisibility(View.VISIBLE);
+            downloadBrochureBtn.setEnabled(false);
+            downloadProgressText.setText("Starting...");
+        } else {
+            downloadButtonContent.setVisibility(View.VISIBLE);
+            downloadProgressBar.setVisibility(View.GONE);
+            downloadProgressText.setVisibility(View.GONE);
+            downloadBrochureBtn.setEnabled(true);
+        }
+    }
+
+    private void updateDownloadProgress(int progress) {
+        downloadProgressText.setText(progress + "%");
+        downloadProgressBar.setProgress(progress);
+    }
+
+    private void showOpenButton() {
+        openBrochureBtn.setVisibility(View.VISIBLE);
+        downloadBrochureBtn.setVisibility(View.GONE);
+    }
+
+    private void checkDownloadStatus() {
+        DownloadManager.Query query = new DownloadManager.Query();
+        query.setFilterById(downloadId);
+        Cursor cursor = downloadManager.query(query);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            int status = cursor.getInt(
+                    cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS));
+            int reason = cursor.getInt(
+                    cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_REASON));
+
+            if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                runOnUiThread(() -> {
+                    showDownloadProgress(false);
+                    Toast.makeText(this, "Download complete!", Toast.LENGTH_LONG).show();
+                    showOpenButton();
+                });
+            } else if (status == DownloadManager.STATUS_FAILED) {
+                runOnUiThread(() -> {
+                    showDownloadProgress(false);
+                    Toast.makeText(this, "Download failed: " + reason, Toast.LENGTH_SHORT).show();
+                });
+            }
+            cursor.close();
+        }
+    }
+
+    /**
+     * Converts Google Drive sharing links to direct download links
+     */
+    private String convertToDirectDownloadLink(String driveLink) {
+        if (driveLink.contains("drive.google.com")) {
+            String fileId = extractGoogleDriveFileId(driveLink);
+            if (fileId != null) {
+                return "https://drive.google.com/uc?export=download&id=" + fileId;
+            }
+        }
+        return driveLink;
+    }
+
+    /**
+     * Extracts file ID from Google Drive link
+     */
+    private String extractGoogleDriveFileId(String driveLink) {
+        try {
+            if (driveLink.contains("/d/")) {
+                int start = driveLink.indexOf("/d/") + 3;
+                int end = driveLink.indexOf("/", start);
+                if (end == -1) end = driveLink.length();
+                return driveLink.substring(start, end);
+            }
+            else if (driveLink.contains("id=")) {
+                String[] parts = driveLink.split("id=");
+                if (parts.length > 1) {
+                    String id = parts[1];
+                    if (id.contains("&")) {
+                        id = id.substring(0, id.indexOf("&"));
+                    }
+                    return id;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Fallback method: Open brochure in browser
+     */
+    private void openBrochureInBrowser() {
+        if (brochureLink != null && !brochureLink.isEmpty()) {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(brochureLink));
+            startActivity(intent);
+        }
+    }
+
+    /**
+     * Opens downloaded brochure if exists
+     */
+    private void openDownloadedBrochure() {
+        File file = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOWNLOADS), fileName);
+
+        if (file.exists()) {
+            try {
+                Uri uri = FileProvider.getUriForFile(this,
+                        getPackageName() + ".provider", file);
+
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(uri, "application/pdf");
+                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                startActivity(intent);
+            } catch (Exception e) {
+                Toast.makeText(this, "No PDF viewer found", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(this, "File not found. Please download again.", Toast.LENGTH_SHORT).show();
+            downloadBrochureBtn.setVisibility(View.VISIBLE);
+            openBrochureBtn.setVisibility(View.GONE);
+        }
+    }
+
+    /* ======================= API CALLS ======================= */
 
     private void fetchPropertyDetails() {
         showLoading(true);
@@ -208,6 +508,8 @@ public class PropertyViewActivity extends AppCompatActivity {
                 null,
                 response -> {
                     showLoading(false);
+                    Log.d("API_RESPONSE", response.toString());
+
                     try {
                         if (response.getBoolean("success")) {
                             JSONObject property = response.getJSONObject("property");
@@ -224,20 +526,112 @@ public class PropertyViewActivity extends AppCompatActivity {
                     showError(error.getMessage());
                 });
 
+        request.setTag(TAG);
+        requestQueue.add(request);
+    }
+
+    private void savePropertyToWishlist() {
+
+        int userId = Integer.parseInt(session.getUserId());
+        int propertyId = Integer.parseInt(this.propertyId);
+
+        String url = "https://premium-api.dvalleybd.com/get-favourites.php?action=add-favourite";
+
+        StringRequest request = new StringRequest(Request.Method.POST, url,
+                response -> {
+                    Log.d("SAVE_RESPONSE", response);
+                    Toast.makeText(this, "Property Saved Successfully", Toast.LENGTH_SHORT).show();
+                },
+                error -> {
+                    Log.e("SAVE_ERROR", error.toString());
+                    Toast.makeText(this, "Failed to Save Property", Toast.LENGTH_SHORT).show();
+                }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("userId", String.valueOf(userId));
+                params.put("propertyId", String.valueOf(propertyId));
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + session.getToken());
+                return headers;
+            }
+        };
+
+        requestQueue.add(request);
+    }
+
+    private void sendContactToApi(String name, String phone, String email, String message) {
+        setLoading(true);
+
+        String url = "https://api.tphl-erp.dvalleybd.com/api/v1/contact/create";
+        JSONObject json = new JSONObject();
+
+        try {
+            json.put("name", name);
+            json.put("email", email);
+            json.put("phone", phone);
+            json.put("subject", "Property Inquiry - " + propertyName_str);
+            json.put("message", message);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, json,
+                response -> {
+                    setLoading(false);
+                    try {
+                        if (response.getBoolean("success")) {
+                            showSuccessDialog(response.getString("message"));
+                            clearForm();
+                        } else {
+                            showErrorDialog("Submission failed! Try again.");
+                        }
+                    } catch (JSONException e) {
+                        showErrorDialog("Parsing error!");
+                    }
+                },
+                error -> {
+                    setLoading(false);
+                    String msg = "Network error! Please try again.";
+                    if (error.networkResponse != null) {
+                        msg = "Server error: " + error.networkResponse.statusCode;
+                    }
+                    showErrorDialog(msg);
+                });
+
+        request.setTag(TAG);
         requestQueue.add(request);
     }
 
     /* ======================= DATA BINDING ======================= */
 
     private void bindPropertyData(JSONObject data) throws JSONException {
+        // Store property name for filename
+        propertyName_str = data.optString("name", "Property");
+
         // Bind basic property data
         propertyLocation.setText(data.optString("location").toUpperCase());
-        propertyTitle.setText(data.optString("name"));
-        propertyName.setText(data.optString("name"));
+        propertyTitle.setText(propertyName_str);
+        propertyName.setText(propertyName_str);
         propertyBedrooms.setText(data.optString("types"));
         propertyDescription.setText(data.optString("description"));
         tvApartmentsNumber.setText(data.optString("apartmentCount"));
         mapLocation.setText(data.optString("fullLocation"));
+        brochureLink = data.optString("brochureLink");
+
+        // Check if brochure already downloaded
+        fileName = propertyName_str.replaceAll("[^a-zA-Z0-9]", "_") + "_Brochure.pdf";
+        File file = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOWNLOADS), fileName);
+        if (file.exists()) {
+            showOpenButton();
+        }
 
         // Load images
         loadImage(data.optString("image"), propertyHeroImage);
@@ -284,18 +678,14 @@ public class PropertyViewActivity extends AppCompatActivity {
 
         for (int i = 0; i < amenitiesArray.length(); i++) {
             JSONObject amenityObj = amenitiesArray.getJSONObject(i);
-
-            // Note: The API uses "img" field, not "icon"
             String imageUrl = amenityObj.optString("img", "");
             String name = amenityObj.optString("name", "");
 
             if (!name.isEmpty()) {
-                AmenityItem amenityItem = new AmenityItem(name, imageUrl);
-                amenityList.add(amenityItem);
+                amenityList.add(new AmenityItem(name, imageUrl));
             }
         }
 
-        // Update the adapter with amenities data
         amenityAdapter.updateList(amenityList);
     }
 
@@ -313,13 +703,7 @@ public class PropertyViewActivity extends AppCompatActivity {
             String value = s.optString("value", "");
 
             if (label.toLowerCase().contains("unit") && value.toLowerCase().contains("sft")) {
-                units.add(new UnitItem(
-                        label,
-                        value,
-                        bedroom,
-                        bathroom,
-                        price
-                ));
+                units.add(new UnitItem(label, value, bedroom, bathroom, price));
             }
         }
 
@@ -336,7 +720,7 @@ public class PropertyViewActivity extends AppCompatActivity {
         return "N/A";
     }
 
-    /* ======================= HELPERS ======================= */
+    /* ======================= UI HELPERS ======================= */
 
     private void loadImage(String url, ImageView view) {
         if (url != null && !url.isEmpty()) {
@@ -350,10 +734,103 @@ public class PropertyViewActivity extends AppCompatActivity {
         }
     }
 
+    private void showLoading(boolean show) {
+        if (progressBar != null && mainContent != null) {
+            progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+            mainContent.setVisibility(show ? View.GONE : View.VISIBLE);
+        }
+    }
+
+    private void setLoading(boolean isLoading) {
+        if (submitContactBtn != null && submitProgress != null && submitText != null) {
+            submitContactBtn.setEnabled(!isLoading);
+            submitProgress.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+            submitText.setVisibility(isLoading ? View.INVISIBLE : View.VISIBLE);
+        }
+    }
+
+    private void clearForm() {
+        nameEditText.setText("");
+        phoneEditText.setText("");
+        emailEditText.setText("");
+        messageEditText.setText("");
+        nameEditText.clearFocus();
+        phoneEditText.clearFocus();
+        emailEditText.clearFocus();
+        messageEditText.clearFocus();
+    }
+
+    /* ======================= DIALOGS ======================= */
+
+    private void showLoginDialog() {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_login_required);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.setCancelable(true);
+
+        TextView btnLoginNow = dialog.findViewById(R.id.btnLoginNow);
+        TextView btnContactNow = dialog.findViewById(R.id.btnContactNow);
+
+        btnLoginNow.setOnClickListener(v -> {
+            dialog.dismiss();
+            startActivity(new Intent(PropertyViewActivity.this, LoginActivity.class));
+        });
+
+        btnContactNow.setOnClickListener(v -> {
+            dialog.dismiss();
+            startActivity(new Intent(PropertyViewActivity.this, Contact_or_MessageActivity.class));
+        });
+
+        dialog.show();
+    }
+
+    private void showSuccessDialog(String message) {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_contact_success);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        TextView msg = dialog.findViewById(R.id.dialogMessage);
+        TextView ok = dialog.findViewById(R.id.dialogOkBtn);
+        msg.setText(message);
+        ok.setOnClickListener(v -> dialog.dismiss());
+        dialog.show();
+    }
+
+    private void showErrorDialog(String message) {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_error);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        TextView msg = dialog.findViewById(R.id.errorMessage);
+        TextView retry = dialog.findViewById(R.id.btnTryAgain);
+        msg.setText(message);
+        retry.setOnClickListener(v -> {
+            dialog.dismiss();
+            submitContactForm();
+        });
+        dialog.show();
+    }
+
+    private void callAgent() {
+        String phoneNumber = "+8801958253300";
+        Intent intent = new Intent(Intent.ACTION_DIAL);
+        intent.setData(Uri.parse("tel:" + phoneNumber));
+        startActivity(intent);
+    }
+
+    private void openFavoritesActivity() {
+        startActivity(new Intent(PropertyViewActivity.this, FavoritesActivity.class));
+    }
+
     private void submitContactForm() {
         String name = nameEditText.getText().toString().trim();
         String phone = phoneEditText.getText().toString().trim();
         String email = emailEditText.getText().toString().trim();
+        String message = messageEditText.getText().toString().trim();
 
         if (name.isEmpty()) {
             nameEditText.setError("Name is required");
@@ -373,31 +850,31 @@ public class PropertyViewActivity extends AppCompatActivity {
             return;
         }
 
-        // Basic email validation
-        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             emailEditText.setError("Enter a valid email");
             emailEditText.requestFocus();
             return;
         }
 
-        // Show success message
-        Toast.makeText(this, "Request submitted successfully! We'll contact you soon.", Toast.LENGTH_SHORT).show();
-
-        // Clear form
-        nameEditText.setText("");
-        phoneEditText.setText("");
-        emailEditText.setText("");
-        messageEditText.setText("");
+        sendContactToApi(name, phone, email, message);
     }
-
 
     private void showError(String msg) {
         Toast.makeText(this, "Error: " + msg, Toast.LENGTH_SHORT).show();
     }
 
+    /* ======================= LIFECYCLE ======================= */
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (requestQueue != null) requestQueue.stop();
+        if (requestQueue != null) {
+            requestQueue.cancelAll(TAG);
+        }
+        try {
+            unregisterReceiver(downloadReceiver);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

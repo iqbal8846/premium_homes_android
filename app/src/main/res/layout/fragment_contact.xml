@@ -281,32 +281,35 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="28dp"
-                    app:cardBackgroundColor="@color/transparent"
-                    app:cardElevation="0dp"
-                    app:cardCornerRadius="14dp">
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="0dp">
 
-                    <LinearLayout
+                    <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center"
-                        android:paddingVertical="18dp"
                         android:background="@drawable/gradient_green_button"
-                        android:clickable="true"
-                        android:focusable="true">
+                        android:paddingVertical="18dp">
 
                         <TextView
+                            android:id="@+id/submitText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="REQUEST CALL BACK"
                             android:textAllCaps="true"
                             android:textColor="#FFFFFF"
-                            android:textSize="14sp"
                             android:textStyle="bold"
-                            android:letterSpacing="0.1" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
+                            android:layout_gravity="center"/>
 
+                        <ProgressBar
+                            android:id="@+id/submitProgress"
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_gravity="center"
+                            android:visibility="gone"
+                            android:indeterminateTint="@android:color/white"/>
+                    </FrameLayout>
+
+                </androidx.cardview.widget.CardView>
                 <!-- Privacy Note -->
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"

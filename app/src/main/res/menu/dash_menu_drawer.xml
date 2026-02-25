@@ -34,6 +34,11 @@
             android:id="@+id/nav_profile"
             android:title="My Profile"
             android:icon="@drawable/ic_person" />
+
+        <item
+            android:id="@+id/nav_favorite"
+            android:title="My Favorite"
+            android:icon="@drawable/ic_favorite" />
     </group>
 
     <item android:title="">

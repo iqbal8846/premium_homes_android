@@ -24,9 +24,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import www.dpremiumhomes.com.MainActivity;
 import www.dpremiumhomes.com.R;
@@ -45,12 +43,9 @@ public class DashboardFragment extends Fragment {
     private final List<CommunityProjectItem> projectList = new ArrayList<>();
     private RequestQueue requestQueue;
 
-    // Stats
     private TextView tvTotalPrice, tvPaymentReceived, tvDuePayment;
 
-    // Loader
-    private int loadingTasks = 0;
-    private boolean loaderHidden = false;
+    private SessionManager sessionManager;
 
     public DashboardFragment() {}
 
@@ -58,6 +53,7 @@ public class DashboardFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestQueue = Volley.newRequestQueue(requireContext());
+        sessionManager = new SessionManager(requireContext());
     }
 
     @Nullable
@@ -65,12 +61,12 @@ public class DashboardFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+
         return inflater.inflate(R.layout.fragment_dashboard, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
 
         recyclerViewProjects = view.findViewById(R.id.recyclerView_projects);
         MaterialButton btnViewAllHeader = view.findViewById(R.id.btnViewAllHeader);
@@ -80,105 +76,105 @@ public class DashboardFragment extends Fragment {
         tvPaymentReceived = view.findViewById(R.id.tv_payment_received);
         tvDuePayment = view.findViewById(R.id.tv_due_payment);
 
-        // Open Projects Fragment
         View.OnClickListener openProjectsListener = v -> openProjectsFragment();
         btnViewAllHeader.setOnClickListener(openProjectsListener);
         btnViewAllProjects.setOnClickListener(openProjectsListener);
 
-        // RecyclerView
-        recyclerViewProjects.setLayoutManager(new GridLayoutManager(requireContext(), 2));
+        setupRecycler();
 
-        projectAdapter = new DashboardAdapter(
-                requireContext(),
-                projectList,
-                item -> {
-                    // Handle dashboard project click
-                    // Example: open PropertyViewActivity
-                    Toast.makeText(requireContext(), item.getTitle(), Toast.LENGTH_SHORT).show();
-                }
-        );
-
-        recyclerViewProjects.setAdapter(projectAdapter);
-
-        loadUserDataFromSession();
+        loadUserFlatData();
         fetchProjects();
     }
 
-    private void loadUserDataFromSession() {
-        SessionManager session = new SessionManager(requireContext());
-        if (!session.isLoggedIn()) return;
+    // ✅ USER FLAT DATA FROM SESSION
+    private void loadUserFlatData() {
+
+        if (!sessionManager.isLoggedIn()) return;
 
         try {
-            JSONObject flatDetails = session.getFlatDetails();
-            Set<String> savedProperties = session.getSavedProperties();
+            JSONObject flat = sessionManager.getFirstFlat();
 
-            if (!savedProperties.isEmpty()) {
-                Iterator<String> iterator = savedProperties.iterator();
-                String firstFlatId = iterator.next();
+            if (flat == null) return;
 
-                if (flatDetails.has(firstFlatId)) {
-                    JSONObject property = flatDetails.getJSONObject(firstFlatId);
+            tvTotalPrice.setText("৳ " + flat.optString("price", "0"));
+            tvPaymentReceived.setText("৳ " + flat.optString("partial_payment", "0"));
+            tvDuePayment.setText("৳ " + flat.optString("due_payment", "0"));
 
-                    tvTotalPrice.setText(property.optString("price", "৳0"));
-                    tvPaymentReceived.setText(property.optString("partial_payment", "৳0"));
-                    tvDuePayment.setText(property.optString("due_payment", "৳0"));
-                }
-            }
         } catch (Exception e) {
             Log.e(TAG, "Session parse error", e);
         }
     }
 
+    // ✅ RECYCLER SETUP
+    private void setupRecycler() {
+
+        recyclerViewProjects.setLayoutManager(new GridLayoutManager(requireContext(), 2));
+
+        projectAdapter = new DashboardAdapter(
+                requireContext(),
+                projectList,
+                item -> Toast.makeText(requireContext(),
+                        item.getTitle(), Toast.LENGTH_SHORT).show()
+        );
+
+        recyclerViewProjects.setAdapter(projectAdapter);
+    }
+
+    // ✅ FETCH PROJECTS FROM API
     private void fetchProjects() {
-        startLoading();
+
+        showLoader();
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET,
                 API_URL,
                 null,
                 response -> {
+
                     try {
                         if (response.optBoolean("success")) {
 
                             projectList.clear();
+
                             JSONArray allProperties = response.optJSONArray("allProperties");
 
                             if (allProperties != null) {
+
                                 for (int i = 0; i < allProperties.length(); i++) {
+
                                     JSONObject p = allProperties.getJSONObject(i);
 
-                                    CommunityProjectItem item =
-                                            new CommunityProjectItem(
-                                                    String.valueOf(p.optInt("id")),
-                                                    p.optString("image"),
-                                                    p.optString("name"),
-                                                    p.optString("location"),
-                                                    p.optString("types"),
-                                                    !"sold".equalsIgnoreCase(p.optString("tag")),
-                                                    p.optString("priceRange", "Contact for price"),
-                                                    p.optString("community", "")
-                                            );
-
-                                    projectList.add(item);
+                                    projectList.add(new CommunityProjectItem(
+                                            String.valueOf(p.optInt("id")),
+                                            p.optString("image"),
+                                            p.optString("name"),
+                                            p.optString("location"),
+                                            p.optString("types"),
+                                            !"sold".equalsIgnoreCase(p.optString("tag")),
+                                            p.optString("priceRange", "Contact for price"),
+                                            p.optString("community", "")
+                                    ));
                                 }
                             }
 
                             projectAdapter.notifyDataSetChanged();
+
                         } else {
                             Toast.makeText(requireContext(),
                                     "Failed to load projects", Toast.LENGTH_SHORT).show();
                         }
+
                     } catch (Exception e) {
                         Log.e(TAG, "JSON error", e);
-                    } finally {
-                        finishLoading();
                     }
+
+                    hideLoader();
                 },
                 error -> {
                     Log.e(TAG, "Volley error", error);
                     Toast.makeText(requireContext(),
                             "Server connection failed", Toast.LENGTH_SHORT).show();
-                    finishLoading();
+                    hideLoader();
                 }
         );
 
@@ -194,24 +190,18 @@ public class DashboardFragment extends Fragment {
                 .commit();
     }
 
-    // Loader helpers
-    private void startLoading() {
-        loadingTasks++;
-        loaderHidden = false;
+    // ✅ LOADER
+    private void showLoader() {
         if (isAdded()) ((MainActivity) requireActivity()).showLoader();
     }
 
-    private void finishLoading() {
-        loadingTasks--;
-        if (loadingTasks <= 0 && !loaderHidden) {
-            loaderHidden = true;
-            if (isAdded()) ((MainActivity) requireActivity()).hideLoader();
-        }
+    private void hideLoader() {
+        if (isAdded()) ((MainActivity) requireActivity()).hideLoader();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (isAdded()) ((MainActivity) requireActivity()).hideLoader();
+        hideLoader();
     }
 }

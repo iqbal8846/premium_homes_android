@@ -58,6 +58,16 @@
             android:layout_height="wrap_content"
             android:id="@+id/reviewList"/>
 
+        <TextView
+            android:id="@+id/emptyStateText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="No reviews available"
+            android:textColor="@color/gray_500"
+            android:textSize="16sp"
+            android:visibility="gone" />
+
     </LinearLayout>
 
 

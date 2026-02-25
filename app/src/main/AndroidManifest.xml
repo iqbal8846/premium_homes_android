@@ -16,6 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/Base.Theme.ThePremiumHomesLtd">
         <activity
+            android:name=".FavoritesActivity"
+            android:exported="false" />
+        <activity
             android:name=".FlatDetailsActivity"
             android:exported="false" />
         <activity

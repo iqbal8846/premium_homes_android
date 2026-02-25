@@ -1,11 +1,10 @@
 package www.dpremiumhomes.com.adapters;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebChromeClient;
 import android.webkit.WebView;
+import android.webkit.WebSettings;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -15,15 +14,14 @@ import java.util.List;
 import www.dpremiumhomes.com.R;
 import www.dpremiumhomes.com.models.CameraFeed;
 
-public class CctvAdapter extends RecyclerView.Adapter<CctvAdapter.CctvViewHolder> {
+public class CctvAdapter extends RecyclerView.Adapter<CctvAdapter.ViewHolder> {
 
     private List<CameraFeed> cameraFeeds;
-    private Context context;
     private OnCameraClickListener listener;
+    private int selectedCameraId = -1;
 
     public interface OnCameraClickListener {
         void onCameraClick(CameraFeed cameraFeed);
-        void onFullscreenClick(CameraFeed cameraFeed);
     }
 
     public CctvAdapter(List<CameraFeed> cameraFeeds) {
@@ -34,97 +32,103 @@ public class CctvAdapter extends RecyclerView.Adapter<CctvAdapter.CctvViewHolder
         this.listener = listener;
     }
 
-    @NonNull
-    @Override
-    public CctvViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        context = parent.getContext();
-        View view = LayoutInflater.from(context).inflate(R.layout.item_cctv_camera, parent, false);
-        return new CctvViewHolder(view);
+    public void setSelectedCameraId(int cameraId) {
+        this.selectedCameraId = cameraId;
+        notifyDataSetChanged();
     }
 
+    @NonNull
     @Override
-    public void onBindViewHolder(@NonNull CctvViewHolder holder, int position) {
-        CameraFeed camera = cameraFeeds.get(position);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_cctv_camera, parent, false);
+        return new ViewHolder(view);
+    }
 
-        // Set camera information
-        holder.tvCameraName.setText(camera.getName());
-        holder.tvLocation.setText(camera.getLocation());
-        holder.tvPropertyName.setText(camera.getPropertyName());
 
-        // Update LIVE badge visibility
-        holder.tvLive.setVisibility(camera.isLive() ? View.VISIBLE : View.GONE);
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        CameraFeed feed = cameraFeeds.get(position);
 
-        // Setup WebView for RTSP stream
-        setupWebView(holder.webView, holder.loadingIndicator, holder.tvError, camera.getUrl());
+        // Set camera name only
+        holder.tvCameraName.setText(feed.getName());
 
-        // Set click listeners
+        // Show selection indicator if this camera is selected
+        if (feed.getId() == selectedCameraId) {
+            holder.selectionIndicator.setVisibility(View.VISIBLE);
+            holder.itemView.setAlpha(1.0f);
+        } else {
+            holder.selectionIndicator.setVisibility(View.GONE);
+            holder.itemView.setAlpha(0.7f);
+        }
+
+        // Setup WebView for preview
+        setupWebView(holder.webView, holder.loadingIndicator, holder.tvError, feed.getStreamUrl());
+
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
-                listener.onCameraClick(camera);
-            }
-        });
-
-        holder.btnFullscreen.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onFullscreenClick(camera);
+                listener.onCameraClick(feed);
             }
         });
     }
 
     private void setupWebView(WebView webView, ProgressBar loadingIndicator, TextView tvError, String streamUrl) {
-        // Enable JavaScript (required for RTSP.me player)
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setDomStorageEnabled(true);
+        loadingIndicator.setVisibility(View.VISIBLE);
+        tvError.setVisibility(View.GONE);
 
-        // Set WebView clients
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setLoadWithOverviewMode(true);
+        webSettings.setUseWideViewPort(true);
+        webSettings.setSupportZoom(false);
+
+        String html = "<!DOCTYPE html><html><head>" +
+                "<meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
+                "<link href='https://vjs.zencdn.net/7.20.3/video-js.css' rel='stylesheet' />" +
+                "<script src='https://vjs.zencdn.net/7.20.3/video.min.js'></script>" +
+                "</head><body style='margin:0; padding:0; background:black;'>" +
+                "<video id='my-video' class='video-js vjs-default-skin' preload='auto' " +
+                "width='100%' height='100%' style='position:absolute; top:0; left:0;' autoplay muted>" +
+                "<source src='" + streamUrl + "' type='application/x-mpegURL'></video>" +
+                "<script>videojs('my-video').ready(function() { this.play(); });</script>" +
+                "</body></html>";
+
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
                 loadingIndicator.setVisibility(View.GONE);
-                tvError.setVisibility(View.GONE);
             }
 
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                super.onReceivedError(view, errorCode, description, failingUrl);
                 loadingIndicator.setVisibility(View.GONE);
                 tvError.setVisibility(View.VISIBLE);
             }
         });
 
-        // Load the RTSP embed URL
-        String html = "<html><body style='margin:0;padding:0;'>" +
-                "<iframe width='100%' height='100%' src='" + streamUrl +
-                "' frameborder='0' allowfullscreen></iframe></body></html>";
-
-        webView.loadDataWithBaseURL("https://rtsp.me", html, "text/html", "UTF-8", null);
+        webView.loadDataWithBaseURL(null, html, "text/html", "UTF-8", null);
     }
-
     @Override
     public int getItemCount() {
         return cameraFeeds.size();
     }
 
-    static class CctvViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
         WebView webView;
         ProgressBar loadingIndicator;
-        TextView tvError;
-        TextView tvLive;
-        TextView tvCameraName;
-        TextView tvLocation;
-        TextView tvPropertyName;
-        View btnFullscreen;
+        TextView tvLive, tvError, tvCameraName;
+        View selectionIndicator;
 
-        public CctvViewHolder(@NonNull View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
-
             webView = itemView.findViewById(R.id.webView);
             loadingIndicator = itemView.findViewById(R.id.loadingIndicator);
-            tvError = itemView.findViewById(R.id.tvError);
             tvLive = itemView.findViewById(R.id.tvLive);
+            tvError = itemView.findViewById(R.id.tvError);
             tvCameraName = itemView.findViewById(R.id.tvCameraName);
-            tvLocation = itemView.findViewById(R.id.tvLocation);
-            tvPropertyName = itemView.findViewById(R.id.tvPropertyName);
-            btnFullscreen = itemView.findViewById(R.id.btnFullscreen);
+            selectionIndicator = itemView.findViewById(R.id.selectionIndicator);
         }
     }
 }

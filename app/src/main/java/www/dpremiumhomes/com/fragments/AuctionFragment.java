@@ -1,11 +1,13 @@
 package www.dpremiumhomes.com.fragments;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,23 +17,19 @@ import com.google.android.material.button.MaterialButton;
 
 import org.json.JSONObject;
 
-import java.util.Set;
-
 import www.dpremiumhomes.com.MainActivity;
 import www.dpremiumhomes.com.R;
 import www.dpremiumhomes.com.helpers.SessionManager;
 
 public class AuctionFragment extends Fragment {
 
-    private int loadingTasks = 0;
-    private boolean loaderHidden = false;
-
     private ImageView ivPropertyImage;
     private TextView tvProjectName, tvArea, tvPrice;
     private MaterialButton btnAuction;
 
-    public
-    AuctionFragment() {
+    private SessionManager sessionManager;
+
+    public AuctionFragment() {
         // Required empty public constructor
     }
 
@@ -42,81 +40,76 @@ public class AuctionFragment extends Fragment {
             @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState
     ) {
+
         View view = inflater.inflate(R.layout.fragment_auction, container, false);
+
+        sessionManager = new SessionManager(requireContext());
 
         initViews(view);
         loadDataFromSession();
 
-        finishLoading();
         return view;
     }
 
     private void initViews(View view) {
+
         ivPropertyImage = view.findViewById(R.id.iv_property_image);
         tvProjectName = view.findViewById(R.id.tv_project_name);
-        tvArea = view.findViewById(R.id.tv_area);   // create ID if missing
+        tvArea = view.findViewById(R.id.tv_area);
         tvPrice = view.findViewById(R.id.tv_price);
         btnAuction = view.findViewById(R.id.btn_auction);
     }
 
     private void loadDataFromSession() {
-        SessionManager session = new SessionManager(requireContext());
 
-        if (!session.isLoggedIn()) return;
+        if (!sessionManager.isLoggedIn()) return;
 
         try {
-            Set<String> savedProperties = session.getSavedProperties();
-            JSONObject flatDetails = session.getFlatDetails();
+            startLoading();
 
-            if (savedProperties.isEmpty()) return;
+            // ✅ get first flat
+            JSONObject flat = sessionManager.getFirstFlat();
 
-            // Take first saved property
-            String propertyId = savedProperties.iterator().next();
-
-            if (!flatDetails.has(propertyId)) return;
-
-            JSONObject flat = flatDetails.getJSONObject(propertyId);
+            if (flat == null) {
+                finishLoading();
+                return;
+            }
 
             String flatNo = flat.optString("flatNo", "N/A");
             String flatSize = flat.optString("flatSize", "N/A");
             String price = flat.optString("price", "0");
+            String projectName = flat.optString("projectName", "The Premium Green Valley");
 
-            // Bind UI
-            tvProjectName.setText("The Premium Green Valley");
+            // ✅ Bind UI
+            tvProjectName.setText(projectName);
             tvArea.setText(flatSize);
             tvPrice.setText("৳ " + price);
 
             btnAuction.setOnClickListener(v -> {
-                // Later: open auction / sell flow
+                // TODO → Auction / Sell flow
+                Toast.makeText(getContext(), "Upcoming feature", Toast.LENGTH_SHORT).show();
             });
+
+            finishLoading();
 
         } catch (Exception e) {
             e.printStackTrace();
+            finishLoading();
         }
     }
 
+    // ---------------- LOADER ----------------
 
-    // Loader helpers
     private void startLoading() {
-        loadingTasks++;
-        loaderHidden = false;
         if (isAdded()) {
             ((MainActivity) requireActivity()).showLoader();
         }
     }
 
     private void finishLoading() {
-        loadingTasks--;
-        if (loadingTasks <= 0 && !loaderHidden) {
-            loaderHidden = true;
-            if (isAdded()) {
-                ((MainActivity) requireActivity()).hideLoader();
-            }
+        if (isAdded()) {
+            ((MainActivity) requireActivity()).hideLoader();
         }
-    }
-
-    private void failLoading() {
-        finishLoading();
     }
 
     @Override

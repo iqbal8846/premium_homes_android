@@ -36,7 +36,7 @@
                     android:layout_marginRight="10dp"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_projects1"
+                    android:src="@drawable/ic_project2"
                     app:tint="@color/emerald_700"
                     android:layout_gravity="left|center"/>
 
@@ -46,7 +46,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center|left"
                     android:textStyle="normal"
-                    android:textSize="18sp"
+                    android:textSize="22sp"
                     android:text="All Projects"
                     android:textColor="#434343" />
             </LinearLayout>

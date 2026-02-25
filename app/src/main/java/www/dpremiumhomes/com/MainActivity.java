@@ -305,6 +305,12 @@ public class MainActivity extends AppCompatActivity implements FragmentNavigator
             startActivity(intent);
             finish();
         });
+
+        menuView.findViewById(R.id.menu_favorite).setOnClickListener(v->{
+            //loadFragment(new FavoriteFragment(), true);
+            startActivity(new Intent(getApplicationContext(), FavoritesActivity.class));
+            drawerLayout.closeDrawer(drawerContainer);
+        });
     }
 
     /* -------------------- FRAGMENT MANAGEMENT -------------------- */
@@ -338,8 +344,8 @@ public class MainActivity extends AppCompatActivity implements FragmentNavigator
         } else {
             showLogoHeader();
             loadNormalMenu();
-            if (!(fragment instanceof HomeFragment)) {
-                resetHeaderColor();
+            if (!(fragment instanceof HomeFragment) && !(fragment instanceof SearchFragment)) {
+                resetHeaderColor();  // white color এ পরিবর্তন হবে
             }
             updateBottomNavigation(fragment);
         }
@@ -428,10 +434,15 @@ public class MainActivity extends AppCompatActivity implements FragmentNavigator
 
         navContact.setOnClickListener(v -> {
             loadFragment(new ContactFragment(), true);
+
+            //loadNormalMenu();
+            //drawerLayout.openDrawer(drawerContainer);
         });
 
         navAbout.setOnClickListener(v -> {
             loadFragment(new AboutFragment(), true);
+            //loadDashboardMenu();
+            //drawerLayout.openDrawer(drawerContainer);
         });
     }
 
@@ -628,6 +639,19 @@ public class MainActivity extends AppCompatActivity implements FragmentNavigator
             }
         };
         getOnBackPressedDispatcher().addCallback(this, callback);
+    }
+
+    // In your MainActivity, where you have the logout function, make sure it's like this:
+
+    private void logoutUser() {
+        // Clear session
+        session.logout();
+
+        // Navigate to LoginActivity
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     @Override

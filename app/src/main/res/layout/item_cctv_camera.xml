@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
+    android:layout_width="140dp"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    android:elevation="4dp"
-    app:cardCornerRadius="12dp"
+    android:layout_marginEnd="8dp"
+    android:elevation="2dp"
+    app:cardCornerRadius="8dp"
     app:cardElevation="2dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -13,11 +13,11 @@
         android:layout_height="wrap_content"
         android:background="#1B2A3A">
 
-        <!-- Camera Preview Area -->
+        <!-- Small Camera Preview Area -->
         <FrameLayout
             android:id="@+id/previewContainer"
-            android:layout_width="0dp"
-            android:layout_height="200dp"
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
             android:background="@android:color/black"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -32,8 +32,8 @@
             <!-- Loading indicator -->
             <ProgressBar
                 android:id="@+id/loadingIndicator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_gravity="center"
                 android:visibility="visible" />
 
@@ -43,91 +43,57 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:padding="16dp"
-                android:text="Stream not available"
+                android:padding="8dp"
+                android:text="Offline"
                 android:textColor="@android:color/white"
+                android:textSize="10sp"
                 android:visibility="gone" />
 
-            <!-- LIVE badge -->
+            <!-- Small LIVE badge -->
             <TextView
                 android:id="@+id/tvLive"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="4dp"
+                android:layout_margin="4dp"
+                android:paddingHorizontal="6dp"
+                android:paddingVertical="2dp"
                 android:text="LIVE"
                 android:textColor="@android:color/white"
-                android:textSize="10sp"
+                android:textSize="8sp"
                 android:textStyle="bold"
                 android:background="@drawable/bg_live_badge"
                 android:layout_gravity="top|end" />
 
         </FrameLayout>
 
-        <!-- Camera Info Section -->
-        <LinearLayout
-            android:id="@+id/infoContainer"
-            android:layout_width="0dp"
+        <!-- Only Camera Name (no details, no button) -->
+        <TextView
+            android:id="@+id/tvCameraName"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="12dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="8dp"
+            android:paddingHorizontal="6dp"
+            android:text="CAM 01"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:gravity="center"
             app:layout_constraintTop_toBottomOf="@id/previewContainer"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-            <!-- Property Name -->
-            <TextView
-                android:id="@+id/tvPropertyName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="The Premium Garden View"
-                android:textColor="#4FC3F7"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:maxLines="1"
-                android:ellipsize="end" />
-
-            <!-- Camera Name -->
-            <TextView
-                android:id="@+id/tvCameraName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Camera 1"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:maxLines="2"
-                android:ellipsize="end" />
-
-            <!-- Location -->
-            <TextView
-                android:id="@+id/tvLocation"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Property 15 - Flat 1A/1B"
-                android:textColor="#B0BEC5"
-                android:textSize="12sp"
-                android:maxLines="1"
-                android:ellipsize="end" />
-
-            <!-- Action Button -->
-            <Button
-                android:id="@+id/btnFullscreen"
-                android:layout_width="match_parent"
-                android:layout_height="36dp"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/bg_button_outline"
-                android:text="View Fullscreen"
-                android:textColor="#4FC3F7"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:padding="0dp" />
-
-        </LinearLayout>
+        <!-- Selection Indicator -->
+        <View
+            android:id="@+id/selectionIndicator"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:background="#4FC3F7"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

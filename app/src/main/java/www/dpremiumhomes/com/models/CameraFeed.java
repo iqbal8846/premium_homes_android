@@ -5,28 +5,67 @@ public class CameraFeed {
     private String name;
     private String location;
     private String propertyName;
-    private String url;
-    private String type;
-    private boolean isLive;
+    private String streamUrl;
+    private String streamType;
 
-    public CameraFeed(int id, String name, String location, String propertyName, String url, String type) {
+    // Constructor
+    public CameraFeed(int id, String name, String location, String propertyName,
+                      String streamUrl, String streamType) {
         this.id = id;
         this.name = name;
         this.location = location;
         this.propertyName = propertyName;
-        this.url = url;
-        this.type = type;
-        this.isLive = true; // Default to live
+        this.streamUrl = streamUrl;
+        this.streamType = streamType;
     }
 
-    // Getters and Setters
-    public int getId() { return id; }
-    public String getName() { return name; }
-    public String getLocation() { return location; }
-    public String getPropertyName() { return propertyName; }
-    public String getUrl() { return url; }
-    public String getType() { return type; }
-    public boolean isLive() { return isLive; }
+    // Getters
+    public int getId() {
+        return id;
+    }
 
-    public void setLive(boolean live) { isLive = live; }
+    public String getName() {
+        return name;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public String getPropertyName() {
+        return propertyName;
+    }
+
+    public String getStreamUrl() {
+        return streamUrl;
+    }
+
+    public String getStreamType() {
+        return streamType;
+    }
+
+    // Setters (if needed)
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
+    }
+
+    public void setStreamUrl(String streamUrl) {
+        this.streamUrl = streamUrl;
+    }
+
+    public void setStreamType(String streamType) {
+        this.streamType = streamType;
+    }
 }

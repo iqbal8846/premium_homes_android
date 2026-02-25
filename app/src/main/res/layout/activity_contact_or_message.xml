@@ -334,47 +334,59 @@
 
                             </LinearLayout>
 
-                            <!-- Submit Button -->
+
+                            <!-- Submit Button with Progress Bar -->
                             <androidx.cardview.widget.CardView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:elevation="0dp"
-                                app:cardCornerRadius="14dp">
+                                android:id="@+id/btnSubmit"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:foreground="?android:attr/selectableItemBackground"
+                                app:cardCornerRadius="14dp"
+                                app:cardElevation="2dp">
 
                                 <LinearLayout
-                                    android:id="@+id/btnSubmit"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:orientation="horizontal"
                                     android:background="@color/primaryDark1"
                                     android:padding="10dp"
-                                    android:gravity="center"
-                                    >
+                                    android:gravity="center">
 
+                                    <!-- Button Icon -->
                                     <ImageView
+                                        android:id="@+id/btnSubmitIcon"
                                         android:layout_width="24dp"
                                         android:layout_height="24dp"
                                         android:layout_marginRight="6dp"
                                         android:padding="4dp"
-                                        style="@style/TextAppearance.Material3.BodyLarge"
                                         android:src="@drawable/ic_send1"
+                                        android:visibility="visible"
                                         app:tint="@color/white"/>
 
-
+                                    <!-- Button Text -->
                                     <TextView
+                                        android:id="@+id/btnSubmitText"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:text="Send Message"
                                         android:textColor="@color/white"
                                         android:textSize="16sp"
                                         android:textStyle="bold"
-                                        />
+                                        android:visibility="visible"/>
+
+                                    <!-- Progress Bar -->
+                                    <ProgressBar
+                                        android:id="@+id/progressBar"
+                                        android:layout_width="24dp"
+                                        android:layout_height="24dp"
+                                        android:visibility="gone"
+                                        android:indeterminateTint="@color/white"/>
+
                                 </LinearLayout>
 
-
-
                             </androidx.cardview.widget.CardView>
-
 
                         </LinearLayout>
 
