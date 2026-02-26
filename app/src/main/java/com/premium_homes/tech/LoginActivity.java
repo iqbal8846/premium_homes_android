@@ -96,7 +96,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/x-tech-form-urlencoded");
+                headers.put("Content-Type", "application/x-www-form-urlencoded");
                 return headers;
             }
         };
