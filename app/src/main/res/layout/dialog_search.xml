@@ -9,7 +9,6 @@
 
     <!-- MAIN CARD -->
     <androidx.cardview.widget.CardView
-        android:id="@+id/cardRoot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
@@ -86,7 +85,6 @@
 
             <!-- ================= SCROLL CONTENT ================= -->
             <ScrollView
-                android:id="@+id/scrollContent"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -151,7 +149,6 @@
 
                     <!-- Bathroom Section -->
                     <LinearLayout
-                        android:id="@+id/section_bathroom"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -197,7 +194,6 @@
 
                     <!-- Flat Size Section -->
                     <LinearLayout
-                        android:id="@+id/section_bed"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -244,7 +240,6 @@
 
                     <!-- Flat Size Section -->
                     <LinearLayout
-                        android:id="@+id/section_flat_size"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -291,7 +286,6 @@
 
                     <!-- Balcony Section -->
                     <LinearLayout
-                        android:id="@+id/section_balcony"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -338,7 +332,6 @@
 
                     <!-- Location Section -->
                     <LinearLayout
-                        android:id="@+id/section_location"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -388,7 +381,6 @@
 
             <!-- ================= FIXED BOTTOM BAR ================= -->
             <androidx.cardview.widget.CardView
-                android:id="@+id/bottomBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardElevation="10dp"

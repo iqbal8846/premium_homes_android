@@ -31,7 +31,6 @@
             app:cardElevation="4dp">
 
             <TextView
-                android:id="@+id/readTimeBadge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="12dp"
@@ -65,7 +64,6 @@
 
             <!-- Excerpt/Description -->
             <TextView
-                android:id="@+id/blogExcerpt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
@@ -147,7 +145,6 @@
                         app:tint="#6B7280" />
 
                     <TextView
-                        android:id="@+id/blogComments"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="24"

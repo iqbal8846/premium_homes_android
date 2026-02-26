@@ -43,7 +43,7 @@
         <!-- Blog Lists -->
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_margin="5dp"
             android:id="@+id/blogsList"/>
 
@@ -102,7 +102,6 @@
 
                 <!-- Subscribe Button -->
                 <Button
-                    android:id="@+id/btn_subscribe"
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
                     android:text="Subscribe Now"

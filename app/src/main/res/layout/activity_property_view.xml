@@ -375,7 +375,6 @@
                                 />
 
                             <TextView
-                                android:id="@+id/tvApartmentsLabel"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/tvApartmentsNumber"
@@ -427,7 +426,6 @@
                                 android:textStyle="bold" />
 
                             <TextView
-                                android:id="@+id/tvShareLabel"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/tvShareNumber"

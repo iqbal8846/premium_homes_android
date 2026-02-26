@@ -59,7 +59,6 @@
 
                 <!-- Optional: Filter/Clear Button -->
                 <ImageButton
-                    android:id="@+id/clearSearchButton"
                     android:layout_width="12dp"
                     android:layout_height="12dp"
                     app:tint="@color/gray_500"
@@ -222,7 +221,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
                     <LinearLayout
-                        android:id="@+id/communityTab"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"

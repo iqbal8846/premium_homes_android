@@ -116,7 +116,6 @@
 
 
                 <TextView
-                    android:id="@+id/tvHeroSubtitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="We're here to help you find your dream home. Reach out to us anytime!"
@@ -540,7 +539,6 @@
 
                         <!-- Address Card -->
                         <androidx.cardview.widget.CardView
-                            android:id="@+id/cardAddress"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             app:cardCornerRadius="12dp"
@@ -596,7 +594,6 @@
 
                         <!-- Phone Card -->
                         <androidx.cardview.widget.CardView
-                            android:id="@+id/cardPhone"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             app:cardCornerRadius="12dp"
@@ -651,7 +648,6 @@
 
                         <!-- Email Card -->
                         <androidx.cardview.widget.CardView
-                            android:id="@+id/cardEmail"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             app:cardCornerRadius="12dp"
@@ -706,7 +702,6 @@
 
                         <!-- Business Hours Card -->
                         <androidx.cardview.widget.CardView
-                            android:id="@+id/cardBusinessHours"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             app:cardCornerRadius="12dp"
