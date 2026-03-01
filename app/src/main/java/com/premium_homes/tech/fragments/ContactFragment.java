@@ -1,6 +1,7 @@
 package com.premium_homes.tech.fragments;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -23,6 +25,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.premium_homes.tech.MainActivity;
+import com.premium_homes.tech.PrivacyPolicy;
 import com.premium_homes.tech.R;
 
 public class ContactFragment extends Fragment {
@@ -34,6 +37,7 @@ public class ContactFragment extends Fragment {
     private CardView submitContactBtn;
     private ProgressBar progressBar;
     private TextView submitText;
+    private LinearLayout privacy_policy;
 
     private RequestQueue requestQueue;
     private static final String TAG = "CONTACT_REQ";
@@ -51,6 +55,7 @@ public class ContactFragment extends Fragment {
         phoneEditText = view.findViewById(R.id.phoneEditText);
         emailEditText = view.findViewById(R.id.emailEditText);
         messageEditText = view.findViewById(R.id.messageEditText);
+        privacy_policy = view.findViewById(R.id.privacy_policy);
 
         submitContactBtn = view.findViewById(R.id.submitContactBtn);
         progressBar = view.findViewById(R.id.submitProgress);
@@ -61,6 +66,10 @@ public class ContactFragment extends Fragment {
         submitContactBtn.setOnClickListener(v -> submitForm());
 
         finishLoading();
+
+        privacy_policy.setOnClickListener(v ->
+                startActivity(new Intent(getContext(), PrivacyPolicy.class))
+        );
 
         return view;
     }
@@ -90,9 +99,16 @@ public class ContactFragment extends Fragment {
             return;
         }
 
+
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             emailEditText.setError("Enter a valid email");
             emailEditText.requestFocus();
+            return;
+        }
+
+        if (message.isEmpty()) {
+            messageEditText.setError("Email is required");
+            messageEditText.requestFocus();
             return;
         }
 

@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,6 +44,7 @@ public class Contact_or_MessageActivity extends AppCompatActivity {
     private CardView cardCorporate, cardSite, cardAti, cardZonal;
     private ImageView btnBack, btnFacebook, btnLinkedIn, btnYouTube, btnInstagram;
     private TextView tvPhone, tvEmail, tvAddress, tvBusinessHours, tvOfficeName;
+    private LinearLayout privacy_policy;
 
     // Volley RequestQueue
     private RequestQueue requestQueue;
@@ -113,6 +115,8 @@ public class Contact_or_MessageActivity extends AppCompatActivity {
         tvAddress = findViewById(R.id.tvAddress);
         tvBusinessHours = findViewById(R.id.tvBusinessHours);
         tvOfficeName = findViewById(R.id.tvOfficeName);
+
+        privacy_policy=findViewById(R.id.privacy_policy);
     }
 
     private void initializeOfficeData() {
@@ -202,6 +206,11 @@ public class Contact_or_MessageActivity extends AppCompatActivity {
             Intent intent = new Intent(Intent.ACTION_SENDTO);
             intent.setData(Uri.parse("mailto:" + emailAddress));
             startActivity(intent);
+        });
+
+        //Privacy Policy
+        privacy_policy.setOnClickListener(v ->{
+            startActivity(new Intent(Contact_or_MessageActivity.this,PrivacyPolicy.class));
         });
     }
 
@@ -473,7 +482,7 @@ public class Contact_or_MessageActivity extends AppCompatActivity {
 
     private void openInstagram() {
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse("https://www.instagram.com/"));
+        intent.setData(Uri.parse("https://www.instagram.com/thepremiumhomes.ltd"));
         startActivity(intent);
     }
 

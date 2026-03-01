@@ -78,7 +78,7 @@ public class PropertyViewActivity extends AppCompatActivity {
     private FloatingActionButton fabSave;
     private ProgressBar progressBar, submitProgress, downloadProgressBar;
     private TextView downloadProgressText;
-    private LinearLayout downloadButtonContent;
+    private LinearLayout downloadButtonContent,privacy_policy;
     private View mainContent;
 
     private EditText nameEditText, phoneEditText, emailEditText, messageEditText;
@@ -209,6 +209,7 @@ public class PropertyViewActivity extends AppCompatActivity {
         downloadProgressText = findViewById(R.id.downloadProgressText);
         downloadButtonContent = findViewById(R.id.downloadButtonContent);
         mainContent = findViewById(R.id.mainContent);
+        privacy_policy = findViewById(R.id.privacy_policy);
 
         findViewById(R.id.backButton).setOnClickListener(v -> finish());
     }
@@ -265,6 +266,10 @@ public class PropertyViewActivity extends AppCompatActivity {
         findViewById(R.id.viewOnMapBtn).setOnClickListener(v ->
                 Toast.makeText(this, "Opening map...", Toast.LENGTH_SHORT).show()
         );
+
+        privacy_policy.setOnClickListener(v ->
+                startActivity(new Intent(PropertyViewActivity.this, PrivacyPolicy.class))
+);
     }
 
     /* ======================= DOWNLOAD BROCHURE WITH PROGRESS ======================= */
@@ -852,6 +857,13 @@ public class PropertyViewActivity extends AppCompatActivity {
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             emailEditText.setError("Enter a valid email");
             emailEditText.requestFocus();
+            return;
+        }
+
+
+        if (message.isEmpty()) {
+            messageEditText.setError("Email is required");
+            messageEditText.requestFocus();
             return;
         }
 

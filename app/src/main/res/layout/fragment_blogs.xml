@@ -54,7 +54,9 @@
             android:orientation="vertical"
             android:padding="24dp"
             android:background="@color/primary1"
-            android:gravity="center">
+            android:gravity="center"
+            android:visibility="gone"
+            >
 
             <!-- Title -->
             <TextView

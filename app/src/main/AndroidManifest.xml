@@ -16,6 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/Base.Theme.ThePremiumHomesLtd">
         <activity
+            android:name=".PrivacyPolicy"
+            android:exported="false" />
+        <activity
             android:name=".FavoritesActivity"
             android:exported="false" />
         <activity
@@ -42,7 +45,6 @@
         <activity
             android:name=".PropertyViewActivity"
             android:exported="true" />
-
         <activity
             android:name=".SplashScreen"
             android:exported="true"
